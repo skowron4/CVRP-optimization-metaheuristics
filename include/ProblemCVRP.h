@@ -1,4 +1,0 @@
-#ifndef PROBLEMCVRP_H
-#define PROBLEMCVRP_H
-
-#endif //PROBLEMCVRP_H
