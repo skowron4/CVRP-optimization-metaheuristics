@@ -1,12 +1,13 @@
 #ifndef LOADER_H
 #define LOADER_H
 
-#include "Problem.h"
 #include <vector>
 #include <optional>
 #include <string>
 
 using namespace std;
+
+class Problem;
 
 namespace Loader {
     struct City {
