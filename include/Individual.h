@@ -20,6 +20,7 @@ public:
     Individual(Problem &problem, const vector<int> &genotype) :
             problem(problem),
             genotype(genotype),
+            fitness(0),
             is_evaluated(false) {};
 
     Individual &operator=(const Individual &other) {
