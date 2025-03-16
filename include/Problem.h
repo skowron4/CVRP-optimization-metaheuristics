@@ -1,11 +1,12 @@
 #ifndef PROBLEMCVRP_H
 #define PROBLEMCVRP_H
 
-#include "Individual.h"
 #include "Loader.h"
 #include <vector>
 
 using namespace std;
+
+class Individual;
 
 class Problem {
 private:
