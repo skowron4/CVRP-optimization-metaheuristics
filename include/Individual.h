@@ -9,6 +9,8 @@
 
 using namespace std;
 
+class Problem;
+
 class Individual {
 private:
     Problem &problem;
