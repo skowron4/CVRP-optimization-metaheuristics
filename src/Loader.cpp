@@ -27,30 +27,15 @@ optional<Loader::Data> Loader::loadProblemFromFile(const string &filepath) {
         } else if (key == "CAPACITY") {
             parseKey(iss, data.capacity);
         } else if (key == "NODE_COORD_SECTION") {
-            inCitySection = true;
-            inDemandSection = false;
-            inDepotSection = false;
+            parseCity(line, data);
             continue;
         } else if (key == "DEMAND_SECTION") {
-            inCitySection = false;
-            inDemandSection = true;
-            inDepotSection = false;
+            parseDemand(line, data);
             continue;
         } else if (key == "DEPOT_SECTION") {
-            inCitySection = false;
-            inDemandSection = false;
-            inDepotSection = true;
+            parseDepot(line, data);
             continue;
         } else if (key == "EOF") {
-            break;
-        }
-
-        if (inCitySection) {
-            parseCity(line, data);
-        } else if (inDemandSection) {
-            parseDemand(line, data);
-        } else if(inDepotSection) {
-            parseDepot(line, data);
             break;
         }
     }
