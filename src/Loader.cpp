@@ -27,13 +27,10 @@ optional<Loader::Data> Loader::loadProblemFromFile(const string &filepath) {
             parseKey(iss, data.capacity);
         } else if (key == "NODE_COORD_SECTION") {
             parseCity(line, data);
-            continue;
         } else if (key == "DEMAND_SECTION") {
             parseDemand(line, data);
-            continue;
         } else if (key == "DEPOT_SECTION") {
             parseDepot(line, data);
-            continue;
         } else if (key == "EOF") {
             break;
         }
@@ -69,4 +66,8 @@ void Loader::parseDemand(const std::string &line, Data &data) {
 void Loader::parseDepot(const std::string &line, Data &data) {
     std::istringstream iss(line);
     iss >> data.depot;
+}
+
+bool Loader::validateData(const Data &data) {
+    return data.cities.size() == data.dimension || data.demands.size() == data.dimension;
 }
