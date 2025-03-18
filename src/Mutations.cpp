@@ -1,6 +1,13 @@
 #include <algorithm>
 #include "Mutations.h"
 
+void Mutation::updateIndices(size_t genotype_size) {
+    if (indices.size() != genotype_size) {
+        indices.resize(genotype_size);
+        iota(indices.begin(), indices.end(), 0);
+    }
+}
+
 void SingleSwapMutation::mutate(vector<int> &genotype) {
     if (genotype.size() < 2) return;
 
@@ -21,8 +28,7 @@ void InversionMutation::mutate(vector<int> &genotype) {
     updateIndices(genotype.size());
 
     vector<int> chosen(2);
-    int left;
-    int right;
+    int left, right;
 
     while (all_of(genotype.begin() + left,
                   genotype.begin() + right + 1,

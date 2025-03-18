@@ -13,15 +13,10 @@ protected:
 
     explicit Mutation(mt19937 &randomEngine) : random_engine(randomEngine) {};
 
-    void updateIndices(size_t genotype_size) {
-        if (indices.size() != genotype_size) {
-            indices.resize(genotype_size);
-            iota(indices.begin(), indices.end(), 0);
-        }
-    }
+    void updateIndices(size_t genotype_size);
 
 public:
-    virtual void mutate(vector<int> &genotype);
+    virtual void mutate(vector<int> &genotype) = 0;
 
     virtual string getName() const = 0;
 };
