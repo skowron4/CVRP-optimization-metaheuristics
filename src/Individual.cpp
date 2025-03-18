@@ -6,15 +6,15 @@ ostream &operator<<(ostream &os, const Individual &individual) {
 }
 
 bool Individual::operator>(const Individual &other) const {
-    return problem.isFirstFitnessBetter(getFitness(), other.getFitness());
+    return getFitness() > other.getFitness();
 }
 
 bool Individual::operator<(const Individual &other) const {
-    return problem.isFirstFitnessBetter(other.getFitness(), getFitness());
+    return getFitness() < other.getFitness();
 }
 
 bool Individual::operator==(const Individual &other) const {
-    return getFitness() == other.getFitness() && genotype == other.genotype;
+    return getFitness() == other.getFitness();
 }
 
 int Individual::getFitness() const {
