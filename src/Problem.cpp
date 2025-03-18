@@ -91,10 +91,6 @@ vector<Individual> Problem::createGreedyIndividuals() {
     return individuals;
 }
 
-bool Problem::isFirstFitnessBetter(int firstFitness, int secondFitness) const {
-    return firstFitness < secondFitness;
-}
-
 void Problem::printData() const {
     cout << "Name: " << data.name << endl;
     cout << "Comment: " << data.comment << endl;

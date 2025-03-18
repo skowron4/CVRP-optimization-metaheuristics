@@ -15,7 +15,7 @@ private:
     Loader::Data data;
 
     vector<vector<int>> distance_matrix;
-    int genotype_size, cities_count, depots_count;
+    int genotype_size, cities_count;
 
     void computeDistanceMatrix();
 
@@ -25,7 +25,6 @@ public:
     explicit Problem(const Loader::Data& data) : data(data) {
         genotype_size = 2 * data.dimension - 3;
         cities_count = data.dimension - 1;
-        depots_count = cities_count - 1;
         computeDistanceMatrix();
     };
 
@@ -34,8 +33,6 @@ public:
     Individual createRandomIndividual(mt19937 &random_engine);
 
     vector<Individual> createGreedyIndividuals();
-
-    bool isFirstFitnessBetter(int firstFitness, int secondFitness) const;
 
     void printData() const;
 
