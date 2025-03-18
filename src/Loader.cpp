@@ -15,7 +15,6 @@ optional<Loader::Data> Loader::loadProblemFromFile(const string &filepath) {
 
     Data data;
     std::string line;
-    bool inCitySection{false}, inDemandSection{false}, inDepotSection{false};
 
     while (std::getline(file, line)) {
         std::istringstream iss(line);
