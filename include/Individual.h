@@ -57,7 +57,7 @@ public:
 
     int getFitness() const;
 
-    void mutate(const Mutation &mutation);
+    void mutate(Mutation &mutation);
 };
 
 #endif //INDIVIDUAL_H
