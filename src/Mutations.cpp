@@ -10,7 +10,7 @@ void SingleSwapMutation::mutate(vector<int> &genotype) {
     sample(indices.begin(), indices.end(), chosen.begin(), 2, random_engine);
 
     do sample(indices.begin(), indices.end(), chosen.begin(), 2, random_engine);
-    while ((genotype[chosen[0]] == genotype[chosen[1]]) || chosen[0] == chosen[1]);
+    while (genotype[chosen[0]] == genotype[chosen[1]]);
 
     swap(genotype[chosen[0]], genotype[chosen[1]]);
 }

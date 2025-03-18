@@ -21,7 +21,7 @@ protected:
     }
 
 public:
-    virtual void mutate(vector<int> &genotype) const = 0;
+    virtual void mutate(vector<int> &genotype);
 
     virtual string getName() const = 0;
 };
