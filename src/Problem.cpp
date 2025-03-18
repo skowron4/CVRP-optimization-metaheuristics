@@ -1,4 +1,5 @@
 #include "Problem.h"
+#include "Individual.h"
 #include <iostream>
 #include <iomanip>
 #include <algorithm>
@@ -89,10 +90,6 @@ vector<Individual> Problem::createGreedyIndividuals() {
     for (int i = 1; i < data.depot; ++i) individuals.push_back(createGreedyIndividual(i));
     for (int i = data.depot + 1; i <= data.dimension; ++i) individuals.push_back(createGreedyIndividual(i));
     return individuals;
-}
-
-bool Problem::isFirstFitnessBetter(int firstFitness, int secondFitness) const {
-    return firstFitness < secondFitness;
 }
 
 void Problem::printData() const {
