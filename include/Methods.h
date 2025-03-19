@@ -23,8 +23,7 @@ private:
 public:
     explicit Method(const Problem &problem, int iterations) :
             problem(problem),
-            iterations(iterations),
-            statistics(iterations) {};
+            iterations(iterations) {};
 
     virtual Method *clone() const = 0;
 
