@@ -22,13 +22,13 @@ private:
     vector<FitnessRecord> records;
 
 public:
-    Statistics(int size) : records(size) {};
+    explicit Statistics() = default;
+
+    void initialize(int iterations);
 
     void calculateAndAddStatisticsFitnessRecord(const vector<Individual> &individuals);
 
-    FitnessRecord calculateFitnessRecord(const vector<Individual> &individuals) const;
-
-    void clear();
+    static FitnessRecord calculateFitnessRecord(const vector<Individual> &individuals) ;
 };
 
 #endif //STATISTICS_H
