@@ -25,6 +25,12 @@ public:
             fitness(0),
             is_evaluated(false) {};
 
+    Individual(const Individual &other) :
+            problem(other.problem),
+            is_evaluated(false),
+            genotype(other.genotype),
+            fitness(other.fitness) {};
+
     Individual &operator=(const Individual &other) {
         if (this != &other) {
             problem = other.problem;
