@@ -8,7 +8,6 @@ using namespace std;
 class Mutation {
 protected:
     mt19937 random_engine;
-    std::uniform_int_distribution<int> int_dist1, int_dist2;
     vector<int> indices;
 
     explicit Mutation(mt19937 &randomEngine) : random_engine(randomEngine) {};
