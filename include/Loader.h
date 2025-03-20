@@ -23,7 +23,7 @@ namespace Loader {
         int dimension, capacity, depot;
     };
 
-    optional<Loader::Data> loadProblemFromFile(const string &filepath);
+    optional<Data> loadProblemFromFile(const string &filepath);
 
     void parseKey(std::istringstream &iss, int &value);
 

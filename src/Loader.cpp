@@ -69,5 +69,5 @@ void Loader::parseDepot(const std::string &line, Data &data) {
 }
 
 bool Loader::validateData(const Data &data) {
-    return data.cities.size() == data.dimension || data.demands.size() == data.dimension;
+    return data.cities.size() == data.dimension && data.demands.size() == data.dimension;
 }
