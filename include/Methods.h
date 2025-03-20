@@ -16,7 +16,7 @@ private:
     const Problem &problem;
     Statistics statistics;
 
-    vector<Individual> generateNeighbourhood(const Individual &individual, Mutation &mutation) const;
+    vector<Individual> generateNeighbourhood(const Individual &individual, Mutation &mutation, int size) const;
 
     virtual Individual run(bool calculateRecords = false) = 0;
 
