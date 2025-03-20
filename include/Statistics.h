@@ -17,6 +17,10 @@ private:
             os << record.best << ',' << record.avg << ',' << record.worst << ',' << record.stdDev;
             return os;
         }
+
+        static string getHeader() {
+            return "best,avg,worst,stdDev";
+        }
     };
 
     vector<FitnessRecord> records;
@@ -26,9 +30,13 @@ public:
 
     void initialize(int iterations);
 
+    void clear();
+
     void calculateAndAddStatisticsFitnessRecord(const vector<Individual> &individuals);
 
-    static FitnessRecord calculateFitnessRecord(const vector<Individual> &individuals) ;
+    static FitnessRecord calculateFitnessRecord(const vector<Individual> &individuals);
+
+    void saveToFile(const string &filename) const;
 };
 
 #endif //STATISTICS_H

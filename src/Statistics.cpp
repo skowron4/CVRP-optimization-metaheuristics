@@ -1,5 +1,6 @@
 #include "Statistics.h"
 #include <algorithm>
+#include <fstream>
 
 void Statistics::initialize(int iterations) {
     records.clear();
@@ -26,4 +27,22 @@ Statistics::FitnessRecord Statistics::calculateFitnessRecord(const vector<Indivi
     record.stdDev = sqrt(variance / individuals.size());
 
     return record;
+}
+
+void Statistics::clear() {
+    records.clear();
+}
+
+void Statistics::saveToFile(const string &filename) const {
+    ofstream file(filename);
+
+    if (!file.is_open()) {
+        cerr << "Could not open file " << filename << endl;
+        return;
+    }
+
+    file << FitnessRecord::getHeader() << endl;
+    for (const auto &record: records) file << record << endl;
+
+    file.close();
 }
