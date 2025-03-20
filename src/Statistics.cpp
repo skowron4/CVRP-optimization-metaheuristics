@@ -2,10 +2,10 @@
 #include <algorithm>
 #include <fstream>
 
-void Statistics::initialize(int iterations) {
-    records.clear();
-    records.reserve(iterations);
-}
+//void Statistics::initialize(int iterations) {
+//    records.clear();
+//    records.reserve(iterations);
+//}
 
 void Statistics::calculateAndAddStatisticsFitnessRecord(const vector<Individual> &individuals) {
     records.push_back(calculateFitnessRecord(individuals));
@@ -29,9 +29,9 @@ Statistics::FitnessRecord Statistics::calculateFitnessRecord(const vector<Indivi
     return record;
 }
 
-void Statistics::clear() {
-    records.clear();
-}
+//void Statistics::clear() {
+//    records.clear();
+//}
 
 void Statistics::saveToFile(const string &filename) const {
     ofstream file(filename);

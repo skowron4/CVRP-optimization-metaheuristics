@@ -1,17 +1,14 @@
 #include "Methods.h"
 
+//there is no mutation probability so the search may be less efficient (especially at the end of the algorithm)
 vector<Individual> Method::generateNeighbourhood(const Individual &individual, Mutation &mutation, int size) const {
+    vector<Individual> newNeighbourhood(size, individual);
 
+    for(Individual ind : newNeighbourhood) ind.mutate(mutation);
 }
 
-Statistics Method::runManyTimes(int numberOfRuns) const {
-
-}
-
-Individual Method::runOnce() const {
-
-}
-
-void Method::runAndSaveStatisticsToFile(const string &filename) {
-
+Statistics Method::runManyTimes(int numberOfRuns) {
+    for (int i = 0; i < numberOfRuns; ++i) {
+        run();
+    }
 }

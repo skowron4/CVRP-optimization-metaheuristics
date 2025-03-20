@@ -14,11 +14,8 @@ protected:
 
 private:
     const Problem &problem;
-    Statistics statistics;
 
     vector<Individual> generateNeighbourhood(const Individual &individual, Mutation &mutation, int size) const;
-
-    virtual Individual run(bool calculateRecords = false) = 0;
 
 public:
     explicit Method(const Problem &problem, int iterations) :
@@ -27,11 +24,11 @@ public:
 
     virtual Method *clone() const = 0;
 
-    Statistics runManyTimes(int numberOfRuns = 10) const;
+    Statistics runManyTimes(int numberOfRuns = 10);
 
-    Individual runOnce() const;
+    virtual Individual run() = 0;
 
-    void runAndSaveStatisticsToFile(const string &filename);
+    virtual Individual runAndSave() = 0;
 };
 
 class TabuSearchMethod : public Method {
@@ -39,8 +36,6 @@ private:
     Mutation &mutation;
     TabuList tabu_list;
     int neighbourhood_size;
-
-    Individual run(bool calculateRecords = false) override;
 
 public:
     TabuSearchMethod(const Problem &problem, int iterations, Mutation &mutation, int tabuListSize,
@@ -51,6 +46,10 @@ public:
             neighbourhood_size(neighbourhoodSize) {};
 
     Method *clone() const override { return new TabuSearchMethod(*this); }
+
+    Individual run() override;
+
+    Individual runAndSave() override;
 };
 
 class SimulatedAnnealingMethod : public Method {
@@ -60,8 +59,6 @@ private:
     double initial_temperature;
     double final_temperature;
     double cooling_rate;
-
-    Individual run(bool calculateRecords = false) override;
 
 public:
     SimulatedAnnealingMethod(const Problem &problem, int iterations, Mutation &mutation, int neighbourhoodSize,
@@ -74,6 +71,10 @@ public:
             neighbourhood_size(neighbourhoodSize) {};
 
     Method *clone() const override { return new SimulatedAnnealingMethod(*this); }
+
+    Individual run() override;
+
+    Individual runAndSave() override;
 };
 
 class HybridTabuSAMethod : public Method {
@@ -86,9 +87,6 @@ private:
     double initial_temperature;
     double final_temperature;
     double cooling_rate;
-
-    Individual run(bool calculateRecords = false) override;
-
 public:
     HybridTabuSAMethod(const Problem &problem, int iterations, Mutation &tabuMutation, Mutation &saMutation,
                        int tabuListSize, int tabuNeighbourhoodSize,
@@ -105,6 +103,11 @@ public:
             cooling_rate(coolingRate) {};
 
     Method *clone() const override { return new HybridTabuSAMethod(*this); }
+
+    Individual run() override;
+
+    Individual runAndSave() override;
+
 };
 
 #endif //METHODS_H

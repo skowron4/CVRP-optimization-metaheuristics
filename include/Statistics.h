@@ -26,11 +26,13 @@ private:
     vector<FitnessRecord> records;
 
 public:
-    explicit Statistics() = default;
+    explicit Statistics(int iterations) {
+        records.reserve(iterations);
+    };
 
-    void initialize(int iterations);
+//    void initialize(int iterations);
 
-    void clear();
+//    void clear();
 
     void calculateAndAddStatisticsFitnessRecord(const vector<Individual> &individuals);
 
