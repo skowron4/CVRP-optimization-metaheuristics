@@ -29,12 +29,8 @@ Statistics::FitnessRecord Statistics::calculateFitnessRecord(const vector<Indivi
     return record;
 }
 
-//void Statistics::clear() {
-//    records.clear();
-//}
-
 void Statistics::saveToFile(const string &filename) const {
-    ofstream file(filename);
+    ofstream file(filename + ".csv");
 
     if (!file.is_open()) {
         cerr << "Could not open file " << filename << endl;

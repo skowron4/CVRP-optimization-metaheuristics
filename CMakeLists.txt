@@ -10,4 +10,5 @@ include_directories(${INC_DIR})
 
 file(GLOB_RECURSE SOURCES "${SRC_DIR}/*.cpp")
 
-add_executable(${PROJECT_NAME} ${SOURCES} main.cpp)
+add_executable(${PROJECT_NAME} ${SOURCES} main.cpp
+        src/Methods/Methods.cpp)

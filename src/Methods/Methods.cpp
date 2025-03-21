@@ -5,6 +5,8 @@ vector<Individual> Method::generateNeighbourhood(const Individual &individual, M
     vector<Individual> newNeighbourhood(size, individual);
 
     for(Individual ind : newNeighbourhood) ind.mutate(mutation);
+
+    return std::move(newNeighbourhood);
 }
 
 Statistics Method::runManyTimes(int numberOfRuns) {

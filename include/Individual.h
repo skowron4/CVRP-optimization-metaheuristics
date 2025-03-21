@@ -19,6 +19,19 @@ private:
     mutable bool is_evaluated;
 
 public:
+    Individual(Problem &problem, mt19937 &randomEngine) :
+            problem(problem),
+            fitness(0),
+            is_evaluated(false) {
+        genotype.resize(problem.getGenotypeSize());
+
+        std::uniform_int_distribution<> intDis(0, 1);
+
+        for (int & i : genotype) {
+            i = intDis(randomEngine);
+        }
+    }
+
     Individual(Problem &problem, const vector<int> &genotype) :
             problem(problem),
             genotype(genotype),
@@ -27,7 +40,7 @@ public:
 
     Individual(const Individual &other) :
             problem(other.problem),
-            is_evaluated(false),
+            is_evaluated(other.is_evaluated),
             genotype(other.genotype),
             fitness(other.fitness) {};
 
