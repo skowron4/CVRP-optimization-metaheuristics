@@ -11,16 +11,15 @@ using namespace std;
 class Method {
 protected:
     int iterations;
-
-private:
-    const Problem &problem;
-
+    Problem &problem;
+    mt19937 random_engine;
     vector<Individual> generateNeighbourhood(const Individual &individual, Mutation &mutation, int size) const;
 
 public:
-    explicit Method(const Problem &problem, int iterations) :
+    explicit Method(Problem &problem, int iterations, mt19937 randomEngine) :
             problem(problem),
-            iterations(iterations) {};
+            iterations(iterations),
+            random_engine(randomEngine) {};
 
     virtual Method *clone() const = 0;
 
@@ -38,14 +37,20 @@ private:
     int neighbourhood_size;
 
 public:
-    TabuSearchMethod(const Problem &problem, int iterations, Mutation &mutation, int tabuListSize,
-                     int neighbourhoodSize) :
-            Method(problem, iterations),
+    TabuSearchMethod(Problem &problem,
+                     int iterations,
+                     Mutation &mutation,
+                     int tabuListSize,
+                     int neighbourhoodSize,
+                     mt19937 randomEngine) :
+            Method(problem, iterations, randomEngine),
             mutation(mutation),
             tabu_list(tabuListSize),
             neighbourhood_size(neighbourhoodSize) {};
 
     Method *clone() const override { return new TabuSearchMethod(*this); }
+
+    void algorithmStep(Individual &currentIndividual, Individual &bestIndividual, vector<Individual> &neighborhood);
 
     Individual run() override;
 
@@ -61,9 +66,15 @@ private:
     double cooling_rate;
 
 public:
-    SimulatedAnnealingMethod(const Problem &problem, int iterations, Mutation &mutation, int neighbourhoodSize,
-                             double initialTemperature, double finalTemperature, double coolingRate) :
-            Method(problem, iterations),
+    SimulatedAnnealingMethod(Problem &problem,
+                             int iterations,
+                             Mutation &mutation,
+                             int neighbourhoodSize,
+                             double initialTemperature,
+                             double finalTemperature,
+                             double coolingRate,
+                             mt19937 randomEngine) :
+            Method(problem, iterations, randomEngine),
             mutation(mutation),
             initial_temperature(initialTemperature),
             final_temperature(finalTemperature),
@@ -88,11 +99,18 @@ private:
     double final_temperature;
     double cooling_rate;
 public:
-    HybridTabuSAMethod(const Problem &problem, int iterations, Mutation &tabuMutation, Mutation &saMutation,
-                       int tabuListSize, int tabuNeighbourhoodSize,
-                       int saNeighbourhoodSize, double initialTemperature, double finalTemperature, double coolingRate)
-            :
-            Method(problem, iterations),
+    HybridTabuSAMethod(Problem &problem,
+                       int iterations,
+                       Mutation &tabuMutation,
+                       Mutation &saMutation,
+                       int tabuListSize,
+                       int tabuNeighbourhoodSize,
+                       int saNeighbourhoodSize,
+                       double initialTemperature,
+                       double finalTemperature,
+                       double coolingRate,
+                       mt19937 randomEngine) :
+            Method(problem, iterations, randomEngine),
             tabu_mutation(tabuMutation),
             sa_mutation(saMutation),
             tabu_list(tabuListSize),

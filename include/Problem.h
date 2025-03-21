@@ -36,6 +36,8 @@ public:
     void printData() const;
 
     void printDistanceMatrix() const;
+
+    int getGenotypeSize() const {return genotype_size;}
 };
 
 #endif //PROBLEMCVRP_H
