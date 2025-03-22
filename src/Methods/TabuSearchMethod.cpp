@@ -24,6 +24,7 @@ void TabuSearchMethod::algorithmStep(Individual &currentIndividual,
     if (currentIndividual < bestIndividual) {
         bestIndividual = currentIndividual;
         tabu_list.add(currentIndividual);
+        //if better!!!
     }
 }
 

@@ -70,8 +70,12 @@ private:
     Mutation &mutation;
     int neighbourhood_size;
     double initial_temperature;
+    double current_temperature;
     double final_temperature;
-    double cooling_rate;
+    double (*cooling_scheme)(double);
+    std::uniform_real_distribution<double> real_dist;
+
+    bool annealing(int best, int current);
 
 protected:
     void algorithmStep(Individual &currentIndividual,
@@ -87,13 +91,14 @@ public:
                              int neighbourhoodSize,
                              double initialTemperature,
                              double finalTemperature,
-                             double coolingRate,
+                             double (*coolingScheme)(double),
                              mt19937 randomEngine) :
             Method(problem, iterations, randomEngine),
             mutation(mutation),
             initial_temperature(initialTemperature),
+            current_temperature(0),
             final_temperature(finalTemperature),
-            cooling_rate(coolingRate),
+            cooling_scheme(coolingScheme),
             neighbourhood_size(neighbourhoodSize) {};
 
     Method *clone() const override { return new SimulatedAnnealingMethod(*this); }
