@@ -1,12 +1,24 @@
 #include <algorithm>
 #include "Methods.h"
 
+Individual* TabuSearchMethod::findBestIndividual(vector<Individual> &neighborhood) {
+   Individual *bestInd = nullptr;
+
+    for (auto& ind : neighborhood)
+        if (!tabu_list.contains(ind) && (bestInd == nullptr || *bestInd > ind)) bestInd = &ind;
+
+    return bestInd;
+}
+
 void TabuSearchMethod::algorithmStep(Individual &currentIndividual,
                                      Individual &bestIndividual,
                                      vector<Individual> &neighborhood) {
 
     neighborhood = generateNeighbourhood(currentIndividual, mutation, neighbourhood_size);
-    currentIndividual = *min_element(neighborhood.begin(), neighborhood.end());
+    auto temp = findBestIndividual(neighborhood);
+
+    if (temp) currentIndividual = *temp;
+
     if (currentIndividual < bestIndividual) bestIndividual = currentIndividual;
     tabu_list.add(currentIndividual);
 }
@@ -35,7 +47,7 @@ Individual TabuSearchMethod::runAndSave() {
         statistics.calculateAndAddStatisticsFitnessRecord(neighborhood);
     }
 
-    statistics.saveToFile("placeholderfile");
+    statistics.saveToFile("placeHolderFile");
 
     return bestIndividual;
 }
