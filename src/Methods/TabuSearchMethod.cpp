@@ -17,8 +17,11 @@ void TabuSearchMethod::algorithmStep(Individual &currentIndividual,
     neighborhood = generateNeighbourhood(currentIndividual, mutation, neighbourhood_size);
     auto temp = findBestIndividual(neighborhood);
 
-    if (temp) currentIndividual = *temp;
-    else if (currentIndividual < bestIndividual) {
+    if (!temp) return;
+
+    currentIndividual = *temp;
+
+    if (currentIndividual < bestIndividual) {
         bestIndividual = currentIndividual;
         tabu_list.add(currentIndividual);
     }
