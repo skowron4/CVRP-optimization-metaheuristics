@@ -36,6 +36,9 @@ private:
     TabuList tabu_list;
     int neighbourhood_size;
 
+protected:
+    Individual* findBestIndividual(vector<Individual> &neighborhood);
+
 public:
     TabuSearchMethod(Problem &problem,
                      int iterations,
