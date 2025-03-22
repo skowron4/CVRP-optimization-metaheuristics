@@ -14,6 +14,10 @@ protected:
     Problem &problem;
     mt19937 random_engine;
     vector<Individual> generateNeighbourhood(const Individual &individual, Mutation &mutation, int size) const;
+    virtual void algorithmStep(Individual &currentIndividual,
+                               Individual &bestIndividual,
+                               vector<Individual> &neighborhood) = 0;
+    virtual Individual* findBestIndividual(vector<Individual> &neighborhood) = 0;
 
 public:
     explicit Method(Problem &problem, int iterations, mt19937 randomEngine) :
@@ -37,7 +41,10 @@ private:
     int neighbourhood_size;
 
 protected:
-    Individual* findBestIndividual(vector<Individual> &neighborhood);
+    void algorithmStep(Individual &currentIndividual,
+                       Individual &bestIndividual,
+                       vector<Individual> &neighborhood) override;
+    Individual* findBestIndividual(vector<Individual> &neighborhood) override;
 
 public:
     TabuSearchMethod(Problem &problem,
@@ -53,8 +60,6 @@ public:
 
     Method *clone() const override { return new TabuSearchMethod(*this); }
 
-    void algorithmStep(Individual &currentIndividual, Individual &bestIndividual, vector<Individual> &neighborhood);
-
     Individual run() override;
 
     Individual runAndSave() override;
@@ -67,6 +72,13 @@ private:
     double initial_temperature;
     double final_temperature;
     double cooling_rate;
+
+protected:
+    void algorithmStep(Individual &currentIndividual,
+                       Individual &bestIndividual,
+                       vector<Individual> &neighborhood) override;
+
+    Individual* findBestIndividual(vector<Individual> &neighborhood) override;
 
 public:
     SimulatedAnnealingMethod(Problem &problem,
@@ -101,6 +113,14 @@ private:
     double initial_temperature;
     double final_temperature;
     double cooling_rate;
+
+protected:
+    void algorithmStep(Individual &currentIndividual,
+                       Individual &bestIndividual,
+                       vector<Individual> &neighborhood) override;
+
+    Individual* findBestIndividual(vector<Individual> &neighborhood) override;
+
 public:
     HybridTabuSAMethod(Problem &problem,
                        int iterations,

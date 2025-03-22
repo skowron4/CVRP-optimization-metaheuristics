@@ -18,9 +18,10 @@ void TabuSearchMethod::algorithmStep(Individual &currentIndividual,
     auto temp = findBestIndividual(neighborhood);
 
     if (temp) currentIndividual = *temp;
-
-    if (currentIndividual < bestIndividual) bestIndividual = currentIndividual;
-    tabu_list.add(currentIndividual);
+    else if (currentIndividual < bestIndividual) {
+        bestIndividual = currentIndividual;
+        tabu_list.add(currentIndividual);
+    }
 }
 
 Individual TabuSearchMethod::run() {
