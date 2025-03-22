@@ -7,8 +7,11 @@ void SimulatedAnnealingMethod::algorithmStep(Individual &currentIndividual,
 
     auto tempInd = findBestIndividual(neighborhood);
 
-    if (tempInd) currentIndividual = *tempInd;
-    else if (currentIndividual < bestIndividual) bestIndividual = currentIndividual;
+    if (!tempInd) return;
+
+    currentIndividual = *tempInd;
+
+    if (currentIndividual < bestIndividual) bestIndividual = currentIndividual;
 }
 
 Individual* SimulatedAnnealingMethod::findBestIndividual(vector<Individual> &neighborhood) {
