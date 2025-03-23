@@ -73,9 +73,12 @@ private:
     double current_temperature;
     double final_temperature;
     double (*cooling_scheme)(double);
+    int best_score;
     std::uniform_real_distribution<double> real_dist;
 
-    bool annealing(int best, int current);
+    void cooling();
+
+    bool annealing(int currentScore);
 
 protected:
     void algorithmStep(Individual &currentIndividual,
@@ -99,7 +102,8 @@ public:
             current_temperature(0),
             final_temperature(finalTemperature),
             cooling_scheme(coolingScheme),
-            neighbourhood_size(neighbourhoodSize) {};
+            neighbourhood_size(neighbourhoodSize),
+            best_score(0) {};
 
     Method *clone() const override { return new SimulatedAnnealingMethod(*this); }
 
@@ -110,14 +114,28 @@ public:
 
 class HybridTabuSAMethod : public Method {
 private:
-    Mutation &tabu_mutation;
-    Mutation &sa_mutation;
-    int tabu_neighbourhood_size;
+    Mutation &mutation;
+    int iteration_to_start_heating;
+    int neighbourhood_size;
     TabuList tabu_list;
-    int sa_neighbourhood_size;
     double initial_temperature;
+    double current_temperature;
     double final_temperature;
-    double cooling_rate;
+    double max_heating_temperature;
+    double (*cooling_scheme)(double);
+    double (*heating_scheme)(double);
+    std::uniform_real_distribution<double> real_dist;
+    int best_score;
+
+    bool isBest(Individual &ind, Individual *bestInd);
+
+    bool annealing(int current);
+
+    bool cooling();
+
+    bool heating();
+
+    void updateTemperature(bool &isCooling, int &iterToChange);
 
 protected:
     void algorithmStep(Individual &currentIndividual,
@@ -126,27 +144,32 @@ protected:
 
     Individual* findBestIndividual(vector<Individual> &neighborhood) override;
 
+
 public:
     HybridTabuSAMethod(Problem &problem,
                        int iterations,
-                       Mutation &tabuMutation,
-                       Mutation &saMutation,
-                       int tabuListSize,
-                       int tabuNeighbourhoodSize,
-                       int saNeighbourhoodSize,
+                       int iterationsToStartHeating,
+                       Mutation &mutation,
+                       int tabuSize,
+                       int neighbourhoodSize,
                        double initialTemperature,
                        double finalTemperature,
-                       double coolingRate,
+                       double maxHeatingTemperature,
+                       double (*coolingScheme)(double),
+                       double (*heatingScheme)(double),
                        mt19937 randomEngine) :
             Method(problem, iterations, randomEngine),
-            tabu_mutation(tabuMutation),
-            sa_mutation(saMutation),
-            tabu_list(tabuListSize),
-            tabu_neighbourhood_size(tabuNeighbourhoodSize),
-            sa_neighbourhood_size(saNeighbourhoodSize),
+            iteration_to_start_heating(iterationsToStartHeating),
+            mutation(mutation),
+            tabu_list(tabuSize),
+            neighbourhood_size(neighbourhoodSize),
             initial_temperature(initialTemperature),
+            current_temperature(initialTemperature),
             final_temperature(finalTemperature),
-            cooling_rate(coolingRate) {};
+            max_heating_temperature(maxHeatingTemperature),
+            cooling_scheme(coolingScheme),
+            heating_scheme(heatingScheme),
+            best_score(0) {};
 
     Method *clone() const override { return new HybridTabuSAMethod(*this); }
 

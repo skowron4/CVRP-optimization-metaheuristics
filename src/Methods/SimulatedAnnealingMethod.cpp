@@ -1,16 +1,22 @@
 #include "Methods.h"
 
-bool SimulatedAnnealingMethod::annealing(int best, int current) {
-    return exp((best - current) / current_temperature) < real_dist(random_engine);
+bool SimulatedAnnealingMethod::annealing(int currentScore) {
+    return exp((best_score - currentScore) / current_temperature) < real_dist(random_engine);
 }
 
 Individual* SimulatedAnnealingMethod::findBestIndividual(vector<Individual> &neighborhood) {
     Individual *bestInd = nullptr;
 
     for (auto& ind : neighborhood)
-        if (bestInd == nullptr || *bestInd > ind) bestInd = &ind;
+        if (bestInd == nullptr || *bestInd > ind || annealing(ind.getFitness()))
+            bestInd = &ind;
 
     return bestInd;
+}
+
+void SimulatedAnnealingMethod::cooling() {
+    if (current_temperature > final_temperature)
+        current_temperature = std::max(cooling_scheme(current_temperature), final_temperature);
 }
 
 void SimulatedAnnealingMethod::algorithmStep(Individual &currentIndividual,
@@ -22,14 +28,10 @@ void SimulatedAnnealingMethod::algorithmStep(Individual &currentIndividual,
     if (!tempInd) return;
     currentIndividual = *tempInd;
 
-    if (currentIndividual < bestIndividual ||
-        annealing(bestIndividual.getFitness(), currentIndividual.getFitness()))
-            bestIndividual = currentIndividual;
+    if (currentIndividual < bestIndividual)
+        bestIndividual = currentIndividual;
 
-    if (current_temperature > final_temperature) {
-        current_temperature = cooling_scheme(current_temperature);
-        current_temperature = std::max(current_temperature, final_temperature);
-    }
+    cooling();
 }
 
 Individual SimulatedAnnealingMethod::run() {
@@ -41,7 +43,6 @@ Individual SimulatedAnnealingMethod::run() {
 
     for (int i = 0; i < iterations; ++i)
         algorithmStep(currentIndividual, bestIndividual, neighborhood);
-
 
     return bestIndividual;
 }
