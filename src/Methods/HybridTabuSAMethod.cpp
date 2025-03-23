@@ -46,6 +46,7 @@ void HybridTabuSAMethod::algorithmStep(Individual &currentIndividual,
 
     if (currentIndividual < bestIndividual) {
         bestIndividual = currentIndividual;
+        best_score = bestIndividual.getFitness();
         tabu_list.add(currentIndividual);
     }
 }

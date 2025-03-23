@@ -28,8 +28,10 @@ void SimulatedAnnealingMethod::algorithmStep(Individual &currentIndividual,
     if (!tempInd) return;
     currentIndividual = *tempInd;
 
-    if (currentIndividual < bestIndividual)
+    if (currentIndividual < bestIndividual){
         bestIndividual = currentIndividual;
+        best_score = bestIndividual.getFitness();
+    }
 
     cooling();
 }
