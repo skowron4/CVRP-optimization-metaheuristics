@@ -36,6 +36,8 @@ public:
     void printData() const;
 
     void printDistanceMatrix() const;
+
+    string getName() const { return data.name; }
 };
 
 #endif //PROBLEMCVRP_H
