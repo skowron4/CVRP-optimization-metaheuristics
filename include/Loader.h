@@ -27,6 +27,8 @@ namespace Loader {
 
     void parseKey(std::istringstream &iss, int &value);
 
+    void parseKey(std::istringstream &iss, string &value);
+
     void parseCity(const std::string &line, Data &data);
 
     void parseDemand(const std::string &line, Data &data);
