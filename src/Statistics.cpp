@@ -1,11 +1,8 @@
 #include "Statistics.h"
+#include "Utils.h"
 #include <algorithm>
 #include <fstream>
-
-//void Statistics::initialize(int iterations) {
-//    records.clear();
-//    records.reserve(iterations);
-//}
+#include <filesystem>
 
 void Statistics::calculateAndAddStatisticsFitnessRecord(const vector<Individual> &individuals) {
     records.push_back(calculateFitnessRecord(individuals));
@@ -30,10 +27,16 @@ Statistics::FitnessRecord Statistics::calculateFitnessRecord(const vector<Indivi
 }
 
 void Statistics::saveToFile(const string &filename) const {
-    ofstream file(filename + ".csv");
+    string folder = "./data/results/single/";
+    string filepath = folder + filename + "/" + getCurrentTimestamp() + ".csv";
+
+    // Create folder if it does not exist
+    filesystem::create_directories(folder);
+
+    ofstream file(filepath);
 
     if (!file.is_open()) {
-        cerr << "Could not open file " << filename << endl;
+        cerr << "Could not open file " << filepath << endl;
         return;
     }
 

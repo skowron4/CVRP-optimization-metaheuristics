@@ -8,7 +8,7 @@
 using namespace std;
 
 class Statistics {
-private:
+public:
     struct FitnessRecord {
         int best = 0, worst = 0;
         double avg = 0.0, stdDev = 0.0;
@@ -23,16 +23,14 @@ private:
         }
     };
 
+private:
     vector<FitnessRecord> records;
 
 public:
+
     explicit Statistics(int iterations) {
         records.reserve(iterations);
     };
-
-//    void initialize(int iterations);
-
-//    void clear();
 
     void calculateAndAddStatisticsFitnessRecord(const vector<Individual> &individuals);
 
