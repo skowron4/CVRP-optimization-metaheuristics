@@ -21,7 +21,9 @@ optional<Loader::Data> Loader::loadProblemFromFile(const string &filepath) {
         std::string key;
         iss >> key;
 
-        if (key == "DIMENSION") {
+        if (key == "NAME") {
+            parseKey(iss, data.name);
+        } else if (key == "DIMENSION") {
             parseKey(iss, data.dimension);
         } else if (key == "CAPACITY") {
             parseKey(iss, data.capacity);
@@ -45,6 +47,11 @@ optional<Loader::Data> Loader::loadProblemFromFile(const string &filepath) {
 }
 
 void Loader::parseKey(std::istringstream &iss, int &value) {
+    std::string temp;
+    iss >> temp >> value;
+}
+
+void Loader::parseKey(std::istringstream &iss, string &value) {
     std::string temp;
     iss >> temp >> value;
 }
