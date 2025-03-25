@@ -94,7 +94,7 @@ def traverse_directory(input_directory, output_directory):
 
 
 if __name__ == '__main__':
-    input_directory = '../data/results/'
-    output_directory = '../data/charts/'
+    input_directory = '../data/results/single/'
+    output_directory = '../data/charts/single/'
 
     traverse_directory(input_directory, output_directory)
