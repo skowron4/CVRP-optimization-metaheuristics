@@ -1,13 +1,14 @@
 #include "Methods.h"
+#include "Utils.h"
 
 bool SimulatedAnnealingMethod::annealing(int currentScore) {
-    return exp((best_score - currentScore) / current_temperature) < real_dist(random_engine);
+    return exp((best_individual.getFitness() - currentScore) / current_temperature) < real_dist(random_engine);
 }
 
-Individual* SimulatedAnnealingMethod::findBestIndividual(vector<Individual> &neighborhood) {
+Individual *SimulatedAnnealingMethod::findBestIndividual(vector<Individual> &individuals) {
     Individual *bestInd = nullptr;
 
-    for (auto& ind : neighborhood)
+    for (auto &ind: individuals)
         if (bestInd == nullptr || *bestInd > ind || annealing(ind.getFitness()))
             bestInd = &ind;
 
@@ -19,49 +20,58 @@ void SimulatedAnnealingMethod::cooling() {
         current_temperature = std::max(cooling_scheme(current_temperature), final_temperature);
 }
 
-void SimulatedAnnealingMethod::algorithmStep(Individual &currentIndividual,
-                                             Individual &bestIndividual,
-                                             vector<Individual> &neighborhood) {
+void SimulatedAnnealingMethod::algorithmStep(Individual &currentIndividual, vector<Individual> &neighborhood) {
     neighborhood = generateNeighbourhood(currentIndividual, mutation, neighbourhood_size);
     auto tempInd = findBestIndividual(neighborhood);
 
     if (!tempInd) return;
     currentIndividual = *tempInd;
 
-    if (currentIndividual < bestIndividual){
-        bestIndividual = currentIndividual;
-        best_score = bestIndividual.getFitness();
-    }
+    if (currentIndividual < best_individual) best_individual = currentIndividual;
 
     cooling();
 }
 
 Individual SimulatedAnnealingMethod::run() {
+    reset();
+
     Individual currentIndividual = problem.createRandomIndividual(random_engine);
-    Individual bestIndividual = currentIndividual;
+    best_individual = currentIndividual;
     vector<Individual> neighborhood;
 
-    current_temperature = initial_temperature;
+    for (int i = 0; i < iterations; ++i) algorithmStep(currentIndividual, neighborhood);
 
-    for (int i = 0; i < iterations; ++i)
-        algorithmStep(currentIndividual, bestIndividual, neighborhood);
-
-    return bestIndividual;
+    return best_individual;
 }
 
 Individual SimulatedAnnealingMethod::runAndSave() {
+    reset();
+
     Individual currentIndividual = problem.createRandomIndividual(random_engine);
-    Individual bestIndividual = currentIndividual;
+    best_individual = currentIndividual;
     vector<Individual> neighborhood;
 
     Statistics statistics(iterations);
 
     for (int i = 0; i < iterations; ++i) {
-        algorithmStep(currentIndividual, bestIndividual, neighborhood);
+        algorithmStep(currentIndividual, neighborhood);
         statistics.calculateAndAddStatisticsFitnessRecord(neighborhood);
     }
 
-    statistics.saveToFile("placeHolderFile");
+    statistics.saveToFile(getFileName());
 
-    return bestIndividual;
+    return best_individual;
+}
+
+string SimulatedAnnealingMethod::getFileName() const {
+    return problem.getName() + "_" + short_name + "_" +
+           "mut_" + mutation.getName() + "_" +
+           "iter_" + to_string(iterations) + "_" +
+           "neigh_" + to_string(neighbourhood_size) + "_" +
+           "T0_" + doubleToString(initial_temperature) + "_" +
+           "Tf_" + doubleToString(final_temperature);
+}
+
+void SimulatedAnnealingMethod::reset() {
+    current_temperature = initial_temperature;
 }

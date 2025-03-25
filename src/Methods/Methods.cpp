@@ -1,7 +1,11 @@
+#include <mutex>
+#include <thread>
+#include <fstream>
+#include <filesystem>
 #include "Methods.h"
+#include "Utils.h"
 
-//there is no mutation probability so the search may be less efficient (especially at the end of the algorithm)
-vector<Individual> Method::generateNeighbourhood(const Individual &individual, Mutation &mutation, int size) const {
+vector<Individual> Method::generateNeighbourhood(const Individual &individual, Mutation &mutation, int size) {
     vector<Individual> newNeighbourhood(size, individual);
 
     for(Individual ind : newNeighbourhood) ind.mutate(mutation);
@@ -9,8 +13,68 @@ vector<Individual> Method::generateNeighbourhood(const Individual &individual, M
     return std::move(newNeighbourhood);
 }
 
-Statistics Method::runManyTimes(int numberOfRuns) {
-    for (int i = 0; i < numberOfRuns; ++i) {
-        run();
+vector<Individual> Method::runManyTimes(int numberOfRuns) {
+    vector<Individual> individuals;
+    individuals.reserve(numberOfRuns);
+    mutex mtx;
+
+    auto runSingleInstance = [this, &individuals, &mtx] {
+        unique_ptr<Method> methodCopy(this->clone());
+        Individual result = methodCopy->run();
+        lock_guard<mutex> lock(mtx);
+        individuals.push_back(result);
+    };
+
+    vector<thread> threads;
+    threads.reserve(numberOfRuns);
+    for (int i = 0; i < numberOfRuns; ++i) threads.emplace_back(runSingleInstance);
+    for (auto &thread : threads) thread.join();
+
+    return individuals;
+}
+
+void Method::runEachMethodManyTimesAndSave(Problem &problem, vector<Method *> &methods, int numberOfRuns) {
+    vector<vector<Individual>> results(methods.size());
+    mutex mtx;
+
+    auto runMethodManyTimes = [&results, &mtx, numberOfRuns](Method *method, int index) {
+        vector<Individual> result = method->runManyTimes(numberOfRuns);
+        lock_guard<mutex> lock(mtx);
+        results[index] = result;
+    };
+
+    vector<thread> methodThreads;
+    methodThreads.reserve(methods.size());
+    for (int i = 0; i < methods.size(); ++i) methodThreads.emplace_back(runMethodManyTimes, methods[i], i);
+    for (auto &thread : methodThreads) thread.join();
+
+    // Save results to CSV file
+    string filename = problem.getName();
+    for (auto &method : methods) filename += "_" + method->short_name;
+
+    string folder = "./data/results/box/";
+    string filepath = folder + filename + "/" + getCurrentTimestamp() + ".csv";
+
+    // Create folder if it does not exist
+    filesystem::create_directories(folder);
+
+    ofstream file(filepath);
+
+    if (!file.is_open()) {
+        cerr << "Could not open file " << filepath << endl;
+        return;
     }
+
+    // Write header
+    string header;
+    for (auto &method : methods) header += method->short_name + ",";
+    file << "\n";
+
+    // Write results
+    for (int i = 0; i < numberOfRuns; ++i) {
+        for (int j = 0; j < methods.size(); ++j) file << results[j][i].getFitness() << ",";
+        file << "\n";
+    }
+
+    file.close();
 }

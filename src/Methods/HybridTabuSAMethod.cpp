@@ -1,7 +1,8 @@
 #include "Methods.h"
+#include "Utils.h"
 
 bool HybridTabuSAMethod::annealing(int current) {
-    return exp((best_score - current) / current_temperature) < real_dist(random_engine);
+    return exp((best_individual.getFitness() - current) / current_temperature) < real_dist(random_engine);
 }
 
 bool HybridTabuSAMethod::isBest(Individual &ind, Individual *bestInd) {
@@ -27,64 +28,85 @@ void HybridTabuSAMethod::updateTemperature(bool &isCooling, int &iterToChange) {
     else isCooling = heating();
 }
 
-Individual* HybridTabuSAMethod::findBestIndividual(vector<Individual> &neighborhood) {
+Individual* HybridTabuSAMethod::findBestIndividual(vector<Individual> &individuals) {
     Individual *bestInd = nullptr;
 
-    for (auto& ind : neighborhood) if (isBest(ind, bestInd)) bestInd = &ind;
+    for (auto& ind : individuals) if (isBest(ind, bestInd)) bestInd = &ind;
 
     return bestInd;
 }
 
-void HybridTabuSAMethod::algorithmStep(Individual &currentIndividual,
-                                       Individual &bestIndividual,
-                                       vector<Individual> &neighborhood) {
+void HybridTabuSAMethod::algorithmStep(Individual &currentIndividual, vector<Individual> &neighborhood) {
     neighborhood = generateNeighbourhood(currentIndividual, mutation, neighbourhood_size);
     auto tempInd = findBestIndividual(neighborhood);
 
     if (!tempInd) return;
     currentIndividual = *tempInd;
 
-    if (currentIndividual < bestIndividual) {
-        bestIndividual = currentIndividual;
-        best_score = bestIndividual.getFitness();
+    if (currentIndividual < best_individual) {
+        best_individual = currentIndividual;
         tabu_list.add(currentIndividual);
     }
 }
 
 Individual HybridTabuSAMethod::run() {
+    reset();
+
     Individual currentIndividual = problem.createRandomIndividual(random_engine);
-    Individual bestIndividual = currentIndividual;
+    best_individual = currentIndividual;
     vector<Individual> neighborhood;
+
     tabu_list.add(currentIndividual);
-    current_temperature = initial_temperature;
+
     bool isCooling = true;
-    int iterationFromCoolingCompletionTimeToHeating = iteration_to_start_heating;
+    int iterationCounterToHeating = iteration_to_start_heating;
 
     for (int i = 0; i < iterations; ++i) {
-        algorithmStep(currentIndividual, bestIndividual, neighborhood);
-        updateTemperature(isCooling, iterationFromCoolingCompletionTimeToHeating);
+        algorithmStep(currentIndividual, neighborhood);
+        updateTemperature(isCooling, iterationCounterToHeating);
     }
 
-    return bestIndividual;
+    return best_individual;
 }
 
 Individual HybridTabuSAMethod::runAndSave() {
+    reset();
+
     Individual currentIndividual = problem.createRandomIndividual(random_engine);
-    Individual bestIndividual = currentIndividual;
+    best_individual = currentIndividual;
     vector<Individual> neighborhood;
+
     tabu_list.add(currentIndividual);
-    current_temperature = initial_temperature;
+
     bool isCooling = true;
-    int iterationFromCoolingCompletionTimeToHeating = iteration_to_start_heating;
+    int iterationCounterToHeating = iteration_to_start_heating;
+
     Statistics statistics(iterations);
 
     for (int i = 0; i < iterations; ++i) {
-        algorithmStep(currentIndividual, bestIndividual, neighborhood);
-        updateTemperature(isCooling, iterationFromCoolingCompletionTimeToHeating);
+        algorithmStep(currentIndividual, neighborhood);
+        updateTemperature(isCooling, iterationCounterToHeating);
         statistics.calculateAndAddStatisticsFitnessRecord(neighborhood);
     }
 
-    statistics.saveToFile("placeHolderFile");
+    statistics.saveToFile(getFileName());
 
-    return bestIndividual;
+    return best_individual;
+}
+
+string HybridTabuSAMethod::getFileName() const {
+    return problem.getName() + "_" + short_name + "_" +
+           "mut_" + mutation.getName() + "_" +
+           "iter_" + to_string(iterations) + "_" +
+           "tabu_" + to_string(tabu_list_size) + "_" +
+           "neigh_" + to_string(neighbourhood_size) + "_" +
+           "T0_" + doubleToString(initial_temperature) + "_" +
+           "Tf_" + doubleToString(final_temperature) + "_" +
+           "maxTh_" + doubleToString(max_heating_temperature) + "_" +
+           "iterHeat_" + to_string(iteration_to_start_heating);
+}
+
+void HybridTabuSAMethod::reset() {
+    tabu_list.clear();
+    current_temperature = initial_temperature;
 }
