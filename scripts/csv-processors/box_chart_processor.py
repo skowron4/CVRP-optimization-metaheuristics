@@ -12,7 +12,7 @@ class BoxChartProcessor(CSVProcessor):
     def _plot_chart(self, data, output_filepath):
         plt.figure(figsize=(10, 6))
         plt.boxplot(data.values(), labels=data.keys())
-        plt.xlabel('Methods')
+        plt.xlabel('methods')
         plt.ylabel('Best Fitness')
         plt.title('Box Plot of Best Fitness Values for Each Method')
         plt.savefig(output_filepath)
