@@ -24,7 +24,7 @@ private:
 
     virtual Individual* findBestIndividual(vector<Individual> &individuals) = 0;
 
-    virtual Method *clone() const = 0;
+    virtual unique_ptr<Method> clone() const = 0;
 
     virtual void reset() = 0;
 
@@ -57,7 +57,7 @@ private:
     // Values to reset before each run
     TabuList tabu_list;
 
-    Method *clone() const override { return new TabuSearchMethod(*this); }
+    unique_ptr<Method> clone() const override { return make_unique<TabuSearchMethod>(*this); }
 
     void algorithmStep(Individual &currentIndividual, vector<Individual> &neighborhood) override;
 
@@ -99,7 +99,7 @@ private:
     // Values to reset before each run
     double current_temperature{};
 
-    Method *clone() const override { return new SimulatedAnnealingMethod(*this); }
+    unique_ptr<Method> clone() const override { return make_unique<SimulatedAnnealingMethod>(*this); }
 
     void reset() override;
 
@@ -153,7 +153,7 @@ private:
     TabuList tabu_list;
     double current_temperature{};
 
-    Method *clone() const override { return new HybridTabuSAMethod(*this); }
+    unique_ptr<Method> clone() const override { return make_unique<HybridTabuSAMethod>(*this); }
 
     void reset() override;
 
