@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from csv_processor import CSVProcessor
+from .csv_processor import CSVProcessor
 
 
 class SingleChartProcessor(CSVProcessor):

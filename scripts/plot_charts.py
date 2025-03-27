@@ -1,7 +1,9 @@
 import argparse
+import subprocess
 from concurrent.futures import ProcessPoolExecutor
-from single_chart_processor import SingleChartProcessor
-from box_chart_processor import BoxChartProcessor
+from csv_processors.box_chart_processor import BoxChartProcessor
+from csv_processors.single_chart_processor import SingleChartProcessor
+
 
 # Use non-interactive backend for matplotlib
 import matplotlib
@@ -18,12 +20,56 @@ def process_box_chart():
     box_chart_processor.process_csv_files()
 
 
+def compile_cpp_program():
+    """Compiles the program using CMake."""
+    build_dir = "C://Users//User//CLionProjects//CVRP-optimization-metaheuristics//build"
+    cmake_path = r"C:\Program Files\CMake\bin\cmake.exe"
+
+    try:
+        # Step 1: Run CMake to configure the project
+        subprocess.run([cmake_path, ".."], check=True, text=True, capture_output=True, cwd=build_dir)
+
+        # Step 2: Build the project
+        subprocess.run([cmake_path, "--build", "."], check=True, text=True, capture_output=True, cwd=build_dir)
+
+        print("Compilation completed successfully")
+
+    except subprocess.CalledProcessError as e:
+        print(f"Error during compilation: {e}")
+        print("STDOUT:", e.stdout)
+        print("STDERR:", e.stderr)
+        exit(1)
+
+
+def start_cpp_program(config_file, data_file):
+    """Runs a C++ program with a config file"""
+    cpp_program_path = '../cmake-build-debug/CVRP_optimization_metaheuristics.exe'
+
+    try:
+        result = subprocess.run([cpp_program_path, config_file, data_file], check=True, text=True, capture_output=True)
+
+        print("Program output:", result.stdout)
+        print("Program error (if any):", result.stderr)
+
+    except subprocess.CalledProcessError as e:
+        print(f"Error during execution: {e}")
+        print("STDOUT:", e.stdout)
+        print("STDERR:", e.stderr)
+
+
 def main():
     parser = argparse.ArgumentParser(description='Process and plot CSV files.')
     parser.add_argument('--charts', type=str, default='single,box', help='Comma-separated list of charts to process (single, box)')
+    parser.add_argument('config_file', type=str, help='Path to the C++ config file')
+    parser.add_argument('data_file', type=str, help='Path to the data file')
     args = parser.parse_args()
 
     charts = args.charts.split(',')
+
+    # compile_cpp_program()
+
+    start_cpp_program(args.config_file, args.data_file)
+
     with ProcessPoolExecutor() as executor:
         futures = []
         if 'single' in charts:

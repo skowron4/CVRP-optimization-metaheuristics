@@ -33,7 +33,9 @@ vector<Individual> Method::runManyTimes(int numberOfRuns) {
     return individuals;
 }
 
-void Method::runEachMethodManyTimesAndSave(Problem &problem, vector<Method *> &methods, int numberOfRuns) {
+void Method::runEachMethodManyTimesAndSave(Problem &problem,
+                                           unordered_map<string, unique_ptr<Method>> &methods,
+                                           int numberOfRuns) {
     vector<vector<Individual>> results(methods.size());
     mutex mtx;
 
@@ -45,12 +47,13 @@ void Method::runEachMethodManyTimesAndSave(Problem &problem, vector<Method *> &m
 
     vector<thread> methodThreads;
     methodThreads.reserve(methods.size());
-    for (int i = 0; i < methods.size(); ++i) methodThreads.emplace_back(runMethodManyTimes, methods[i], i);
+    int i{0};
+    for (auto &pair : methods) methodThreads.emplace_back(runMethodManyTimes, pair.second.get(), i++);
     for (auto &thread : methodThreads) thread.join();
 
     // Save results to CSV file
     string filename = problem.getName();
-    for (auto &method : methods) filename += "_" + method->short_name;
+    for (auto &method : methods) filename += "_" + method.second->short_name;
 
     string folder = "./data/results/box/";
     string filepath = folder + filename + "/" + getCurrentTimestamp() + ".csv";
@@ -67,7 +70,7 @@ void Method::runEachMethodManyTimesAndSave(Problem &problem, vector<Method *> &m
 
     // Write header
     string header;
-    for (auto &method : methods) header += method->short_name + ",";
+    for (auto &method : methods) header += method.second->short_name + ",";
     file << "\n";
 
     // Write results
