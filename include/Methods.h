@@ -5,6 +5,9 @@
 #include "Problem.h"
 #include "Statistics.h"
 #include "TabuList.h"
+#include "unordered_map"
+#include <memory>
+#include <utility>
 
 using namespace std;
 
@@ -45,7 +48,9 @@ public:
 
     vector<Individual> runManyTimes(int numberOfRuns = 10);
 
-    static void runEachMethodManyTimesAndSave(Problem &problem, vector<Method *> &methods, int numberOfRuns = 10);
+    static void runEachMethodManyTimesAndSave(Problem &problem,
+                                              unordered_map<string, unique_ptr<Method>> &methods,
+                                              int numberOfRuns = 10);
 };
 
 class TabuSearchMethod : public Method {
@@ -93,7 +98,9 @@ private:
     int neighbourhood_size;
     double initial_temperature;
     double final_temperature;
-    double (*cooling_scheme)(double);
+    double (*cooling_scheme)(double, double);
+    double cooling_ratio;
+    string cool_scheme_name;
     uniform_real_distribution<double> real_dist;
 
     // Values to reset before each run
@@ -118,13 +125,17 @@ public:
                              int neighbourhoodSize,
                              double initialTemperature,
                              double finalTemperature,
-                             double (*coolingScheme)(double),
+                             double coolingRatio,
+                             double (*coolingScheme)(double, double),
+                             string coolSchemeName,
                              mt19937 randomEngine) :
             Method(problem, iterations, randomEngine),
             mutation(mutation),
             initial_temperature(initialTemperature),
             final_temperature(finalTemperature),
+            cooling_ratio{coolingRatio},
             cooling_scheme(coolingScheme),
+            cool_scheme_name(std::move(coolSchemeName)),
             neighbourhood_size(neighbourhoodSize) {
         short_name = "SA";
     };
@@ -145,8 +156,12 @@ private:
     double initial_temperature;
     double final_temperature;
     double max_heating_temperature;
-    double (*cooling_scheme)(double);
-    double (*heating_scheme)(double);
+    double (*cooling_scheme)(double, double);
+    double cooling_ratio;
+    double heating_ratio;
+    double (*heating_scheme)(double, double);
+    string cool_scheme_name;
+    string heat_scheme_name;
     uniform_real_distribution<double> real_dist;
 
     // Values to reset before each run
@@ -181,8 +196,12 @@ public:
                        double initialTemperature,
                        double finalTemperature,
                        double maxHeatingTemperature,
-                       double (*coolingScheme)(double),
-                       double (*heatingScheme)(double),
+                       double (*coolingScheme)(double, double ),
+                       double cooling_ratio,
+                       double heating_ratio,
+                       double (*heatingScheme)(double, double ),
+                       string coolSchemeName,
+                       string heatSchemeName,
                        mt19937 randomEngine) :
             Method(problem, iterations, randomEngine),
             iteration_to_start_heating(iterationsToStartHeating),
@@ -194,7 +213,9 @@ public:
             final_temperature(finalTemperature),
             max_heating_temperature(maxHeatingTemperature),
             cooling_scheme(coolingScheme),
-            heating_scheme(heatingScheme) {
+            heating_scheme(heatingScheme),
+            cool_scheme_name(coolSchemeName),
+            heat_scheme_name(heatSchemeName) {
         short_name = "HTSA";
     };
 

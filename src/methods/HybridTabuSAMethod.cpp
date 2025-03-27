@@ -10,12 +10,12 @@ bool HybridTabuSAMethod::isBest(Individual &ind, Individual *bestInd) {
 }
 
 bool HybridTabuSAMethod::cooling() {
-    current_temperature = std::max(cooling_scheme(current_temperature), final_temperature);
+    current_temperature = std::max(cooling_scheme(current_temperature, cooling_ratio), final_temperature);
     return current_temperature > final_temperature;
 }
 
 bool HybridTabuSAMethod::heating() {
-    current_temperature = std::min(heating_scheme(current_temperature), max_heating_temperature);
+    current_temperature = std::min(heating_scheme(current_temperature, heating_ratio), max_heating_temperature);
     return current_temperature == max_heating_temperature;
 }
 
@@ -103,7 +103,11 @@ string HybridTabuSAMethod::getFileName() const {
            "T0_" + doubleToString(initial_temperature) + "_" +
            "Tf_" + doubleToString(final_temperature) + "_" +
            "maxTh_" + doubleToString(max_heating_temperature) + "_" +
-           "iterHeat_" + to_string(iteration_to_start_heating);
+           "iterHeat_" + to_string(iteration_to_start_heating) + "_" +
+           "coolScheme_" + cool_scheme_name + "_" +
+           "coolRatio_" + to_string(cooling_ratio)  + "_" +
+           "heatScheme_" + heat_scheme_name + "_" +
+           "heatRatio_" + to_string(heating_ratio);
 }
 
 void HybridTabuSAMethod::reset() {
