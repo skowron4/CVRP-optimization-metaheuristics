@@ -1,7 +1,3 @@
-//
-// Created by User on 26.03.2025.
-//
-
 #ifndef CVRP_OPTIMIZATION_METAHEURISTICS_JSONPARSER_H
 #define CVRP_OPTIMIZATION_METAHEURISTICS_JSONPARSER_H
 
@@ -17,6 +13,7 @@ using namespace std;
 class JSONParser {
 public:
     static json loadJSON(const string& filePath);
+
     static unordered_map<string, unique_ptr<Method>> parseJSONAndCreateMethods(const json& config,
                                                                                Problem& problem,
                                                                                SingleSwapMutation& singleSwapMutation,
