@@ -15,6 +15,7 @@ optional<Loader::Data> Loader::loadProblemFromFile(const string &filepath) {
 
     Data data;
     std::string line;
+    bool inCitySection{false}, inDemandSection{false}, inDepotSection{false};
 
     while (std::getline(file, line)) {
         std::istringstream iss(line);
@@ -28,17 +29,35 @@ optional<Loader::Data> Loader::loadProblemFromFile(const string &filepath) {
         } else if (key == "CAPACITY") {
             parseKey(iss, data.capacity);
         } else if (key == "NODE_COORD_SECTION") {
-            parseCity(line, data);
+            inCitySection = true;
+            inDemandSection = false;
+            inDepotSection = false;
+            continue;
         } else if (key == "DEMAND_SECTION") {
-            parseDemand(line, data);
+            inCitySection = false;
+            inDemandSection = true;
+            inDepotSection = false;
+            continue;
         } else if (key == "DEPOT_SECTION") {
-            parseDepot(line, data);
+            inCitySection = false;
+            inDemandSection = false;
+            inDepotSection = true;
+            continue;
         } else if (key == "EOF") {
+            break;
+        }
+
+        if (inCitySection) {
+            parseCity(line, data);
+        } else if (inDemandSection) {
+            parseDemand(line, data);
+        } else if(inDepotSection) {
+            parseDepot(line, data);
             break;
         }
     }
 
-    if (validateData(data)) {
+    if (!validateData(data)) {
         std::cerr << "Error: numbers of cities doesn't fit\n";
         return nullopt;
     }

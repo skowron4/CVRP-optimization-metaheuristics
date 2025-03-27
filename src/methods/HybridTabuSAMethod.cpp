@@ -105,9 +105,7 @@ string HybridTabuSAMethod::getFileName() const {
            "maxTh_" + doubleToString(max_heating_temperature) + "_" +
            "iterHeat_" + to_string(iteration_to_start_heating) + "_" +
            "coolScheme_" + cool_scheme_name + "_" +
-           "coolRatio_" + to_string(cooling_ratio)  + "_" +
-           "heatScheme_" + heat_scheme_name + "_" +
-           "heatRatio_" + to_string(heating_ratio);
+           "heatScheme_" + heat_scheme_name;
 }
 
 void HybridTabuSAMethod::reset() {

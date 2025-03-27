@@ -8,7 +8,7 @@
 vector<Individual> Method::generateNeighbourhood(const Individual &individual, Mutation &mutation, int size) {
     vector<Individual> newNeighbourhood(size, individual);
 
-    for(Individual ind : newNeighbourhood) ind.mutate(mutation);
+    for(Individual& ind : newNeighbourhood) ind.mutate(mutation);
 
     return std::move(newNeighbourhood);
 }
@@ -48,34 +48,41 @@ void Method::runEachMethodManyTimesAndSave(Problem &problem,
     vector<thread> methodThreads;
     methodThreads.reserve(methods.size());
     int i{0};
-    for (auto &pair : methods) methodThreads.emplace_back(runMethodManyTimes, pair.second.get(), i++);
+    for (auto it = methods.begin(); it != methods.end(); ++it, ++i)
+        methodThreads.emplace_back(runMethodManyTimes, it->second.get(), i);
     for (auto &thread : methodThreads) thread.join();
 
     // Save results to CSV file
     string filename = problem.getName();
     for (auto &method : methods) filename += "_" + method.second->short_name;
 
-    string folder = "./data/results/box/";
-    string filepath = folder + filename + "/" + getCurrentTimestamp() + ".csv";
+    string folder = "../data/results/box/";
+    string filepath = folder + filename + "_" + getCurrentTimestamp() + ".csv";
 
     // Create folder if it does not exist
     filesystem::create_directories(folder);
 
-    ofstream file(filepath);
+    std::ofstream file("../data/results/box/A-n32-k5_TS_27-03-2025-18-10-12.csv");
 
-    if (!file.is_open()) {
+    if (!file) {
         cerr << "Could not open file " << filepath << endl;
         return;
     }
 
     // Write header
     string header;
-    for (auto &method : methods) header += method.second->short_name + ",";
-    file << "\n";
+    for (auto it = methods.begin(); it != methods.end(); ++it) {
+        if (it != methods.begin()) header += ",";
+        header += it->second->short_name;
+    }
+    file << header << "\n";
 
     // Write results
     for (int i = 0; i < numberOfRuns; ++i) {
-        for (int j = 0; j < methods.size(); ++j) file << results[j][i].getFitness() << ",";
+        for (int j = 0; j < methods.size(); ++j) {
+            if (j == methods.size() - 1) file << results[j][i].getFitness();
+            else file << results[j][i].getFitness() << ",";
+        }
         file << "\n";
     }
 

@@ -43,7 +43,8 @@ public:
 
     struct Hash {
         size_t operator()(const Individual &individual) const {
-            return std::hash<int>()(individual.getFitness());
+            size_t hash_value = std::hash<int>()(individual.getFitness());
+            return hash_value;
         }
     };
 

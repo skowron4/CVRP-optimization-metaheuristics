@@ -27,8 +27,8 @@ Statistics::FitnessRecord Statistics::calculateFitnessRecord(const vector<Indivi
 }
 
 void Statistics::saveToFile(const string &filename) const {
-    string folder = "./data/results/single/";
-    string filepath = folder + filename + "/" + getCurrentTimestamp() + ".csv";
+    string folder = "../data/results/single/";
+    string filepath = folder + filename + "_" + getCurrentTimestamp() + ".csv";
 
     // Create folder if it does not exist
     filesystem::create_directories(folder);

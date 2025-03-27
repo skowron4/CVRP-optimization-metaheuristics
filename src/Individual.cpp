@@ -14,7 +14,7 @@ bool Individual::operator<(const Individual &other) const {
 }
 
 bool Individual::operator==(const Individual &other) const {
-    return getFitness() == other.getFitness();
+    return getFitness() == other.getFitness() && genotype == other.genotype;
 }
 
 int Individual::getFitness() const {
