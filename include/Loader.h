@@ -35,7 +35,7 @@ private:
 
     void parseDemandSection(ifstream &file, Data &data);
 
-    void parseDepot(const string &line, Data &data);
+    void parseDepot(ifstream &file, Data &data);
 
     bool validateData(const Data &data);
 };

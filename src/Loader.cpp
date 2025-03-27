@@ -24,7 +24,7 @@ optional<Loader::Data> Loader::loadProblemFromFile(const string &filepath) {
         else if (key == "CAPACITY") parseKey(iss, data.capacity);
         else if (key == "NODE_COORD_SECTION") parseCitySection(file, data);
         else if (key == "DEMAND_SECTION") parseDemandSection(file, data);
-        else if (key == "DEPOT_SECTION") parseDepot(line, data);
+        else if (key == "DEPOT_SECTION") parseDepot(file, data);
         else if (key == "EOF") break;
     }
 
@@ -64,9 +64,8 @@ void Loader::parseDemandSection(ifstream &file, Data &data) {
     }
 }
 
-void Loader::parseDepot(const string &line, Data &data) {
-    istringstream iss(line);
-    iss >> data.depot;
+void Loader::parseDepot(ifstream &file, Data &data) {
+    file >> data.depot;
 }
 
 bool Loader::validateData(const Data &data) {
