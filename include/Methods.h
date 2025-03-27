@@ -48,9 +48,9 @@ public:
 
     vector<Individual> runManyTimes(int numberOfRuns = 10);
 
-    static void runEachMethodManyTimesAndSave(Problem &problem,
-                                              unordered_map<string, unique_ptr<Method>> &methods,
-                                              int numberOfRuns = 10);
+    static void runEachMethodManyTimesAndSave(const Problem &problem, const vector<Method *> &methods, int numberOfRuns = 10);
+
+    static void runEachMethodOnceAndSave(const vector<Method *> &methods);
 };
 
 class TabuSearchMethod : public Method {
@@ -213,9 +213,11 @@ public:
             final_temperature(finalTemperature),
             max_heating_temperature(maxHeatingTemperature),
             cooling_scheme(coolingScheme),
+            cooling_ratio(cooling_ratio),
             heating_scheme(heatingScheme),
-            cool_scheme_name(coolSchemeName),
-            heat_scheme_name(heatSchemeName) {
+            heating_ratio(heating_ratio),
+            cool_scheme_name(std::move(coolSchemeName)),
+            heat_scheme_name(std::move(heatSchemeName)) {
         short_name = "HTSA";
     };
 

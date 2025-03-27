@@ -1,7 +1,3 @@
-//
-// Created by User on 26.03.2025.
-//
-
 #include "MethodRunner.h"
 void MethodRunner::runMethods() {
     if (!config.contains("config")) {
@@ -11,34 +7,36 @@ void MethodRunner::runMethods() {
 
     json configData = config["config"];
 
-    if (configData.contains("boxPlot"))
-        runBoxPlotMethods(configData["boxPlot"]);
+    if (configData.contains("boxPlot")) runBoxPlotMethods(configData["boxPlot"]);
+    if (configData.contains("singlePlot")) runSinglePlotMethods(configData);
+}
 
-    if (configData.contains("singlePlot"))
-        runSinglePlotMethods(configData);
+vector<Method *> MethodRunner::getSelectedMethods(const json& config, const string& key) {
+    vector<string> methodNames = extractMethodsFromJson(config, key);
+    vector<Method *> selectedMethods;
+
+    for (const string& methodName : methodNames)
+        if (methods.find(methodName) != methods.end()) selectedMethods.push_back(methods[methodName].get());
+        else cerr << "Warning: Method '" << methodName << "' not found!" << endl;
+
+    return selectedMethods;
 }
 
 void MethodRunner::runBoxPlotMethods(const json& boxPlotConfig) {
-
-    vector<string> methodNames = extractMethodsFromJson(boxPlotConfig, "methods");
+    vector<Method *> selectedMethods = getSelectedMethods(boxPlotConfig, "methods");
     int iterations = extractIterationsFromJson(boxPlotConfig, "iter");
 
-    if (methodNames.empty() || iterations == -1) return;
+    if (selectedMethods.empty() || iterations == -1) return;
 
-    Method::runEachMethodManyTimesAndSave(problem, methods, iterations);
+    Method::runEachMethodManyTimesAndSave(problem, selectedMethods, iterations);
 }
 
 void MethodRunner::runSinglePlotMethods(const json& singlePlotConfig) {
+    vector<Method *> selectedMethods = getSelectedMethods(singlePlotConfig, "singlePlot");
 
-    vector<string> methodNames = extractMethodsFromJson(singlePlotConfig, "singlePlot");
-    if (methodNames.empty()) return;
+    if (selectedMethods.empty()) return;
 
-    for (const string& methodName : methodNames) {
-        if (methods.find(methodName) != methods.end())
-            methods[methodName]->runAndSave();
-        else
-            cerr << "Warning: Method '" << methodName << "' not found!" << endl;
-    }
+    Method::runEachMethodOnceAndSave(selectedMethods);
 }
 
 vector<string> MethodRunner::extractMethodsFromJson(const json& plotConfig, const string& key) {
