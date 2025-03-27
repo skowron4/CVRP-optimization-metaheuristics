@@ -17,7 +17,12 @@ int main(int argc, char* argv[]) {
     string configFilePath = argv[1];
     string dataFilePath = argv[2];
 
-    auto data = Loader::loadProblemFromFile(dataFilePath);
+    Loader loader;
+    auto data = loader.loadProblemFromFile(dataFilePath);
+    if (!data.has_value()) {
+        std::cerr << "Error while loading data from file" << std::endl;
+        return 1;
+    }
 
     Problem problem(data.value());
 

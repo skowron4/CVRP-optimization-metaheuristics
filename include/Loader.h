@@ -7,7 +7,8 @@
 
 using namespace std;
 
-namespace Loader {
+class Loader {
+public:
     struct City {
         int id, x, y;
     };
@@ -25,17 +26,18 @@ namespace Loader {
 
     optional<Data> loadProblemFromFile(const string &filepath);
 
-    void parseKey(std::istringstream &iss, int &value);
+private:
+    void parseKey(istringstream &iss, int &value);
 
-    void parseKey(std::istringstream &iss, string &value);
+    void parseKey(istringstream &iss, string &value);
 
-    void parseCity(const std::string &line, Data &data);
+    void parseCitySection(ifstream &file, Data &data);
 
-    void parseDemand(const std::string &line, Data &data);
+    void parseDemandSection(ifstream &file, Data &data);
 
-    void parseDepot(const std::string &line, Data &data);
+    void parseDepot(const string &line, Data &data);
 
     bool validateData(const Data &data);
-}
+};
 
 #endif //LOADER_H
