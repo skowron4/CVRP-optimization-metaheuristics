@@ -1,5 +1,5 @@
 import os
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ProcessPoolExecutor
 import pandas as pd
 import logging
 
@@ -20,7 +20,7 @@ class CSVProcessor:
         self._traverse_directory()
 
     def _traverse_directory(self):
-        with ThreadPoolExecutor() as executor:
+        with ProcessPoolExecutor() as executor:
             futures = []
             for filename in os.listdir(self.input_directory):
                 if filename.endswith('.csv'):
