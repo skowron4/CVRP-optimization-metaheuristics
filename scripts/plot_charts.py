@@ -1,4 +1,5 @@
 import argparse
+import os
 import subprocess
 from concurrent.futures import ProcessPoolExecutor
 from csv_processors.box_chart_processor import BoxChartProcessor
@@ -22,20 +23,27 @@ def process_box_chart():
 
 def compile_cpp_program():
     """Compiles the program using CMake."""
-    build_dir = "C://Users//User//CLionProjects//CVRP-optimization-metaheuristics//build"
-    cmake_path = r"C:\Program Files\CMake\bin\cmake.exe"
+
+    build_dir = r"C:\Users\User\CLionProjects\CVRP-optimization-metaheuristics\cmake-build-debug"
+
+    cmake_path = r"C:\Program Files\JetBrains\CLion 2023.3.4\bin\cmake\win\x64\bin"
+
+    if not os.path.exists(build_dir):
+        os.makedirs(build_dir)
 
     try:
-        # Step 1: Run CMake to configure the project
-        subprocess.run([cmake_path, ".."], check=True, text=True, capture_output=True, cwd=build_dir)
+        print("Running CMake configuration...")
+        result = subprocess.run([cmake_path, ".."], check=True, text=True, capture_output=True, cwd=build_dir)
+        print(result.stdout)
 
-        # Step 2: Build the project
-        subprocess.run([cmake_path, "--build", "."], check=True, text=True, capture_output=True, cwd=build_dir)
+        print("Building the project...")
+        result = subprocess.run([cmake_path, "--build", "."], check=True, text=True, capture_output=True, cwd=build_dir)
+        print(result.stdout)
 
-        print("Compilation completed successfully")
+        print("Compilation completed successfully!")
 
     except subprocess.CalledProcessError as e:
-        print(f"Error during compilation: {e}")
+        print("Error during compilation!")
         print("STDOUT:", e.stdout)
         print("STDERR:", e.stderr)
         exit(1)
@@ -44,9 +52,16 @@ def compile_cpp_program():
 def start_cpp_program(config_file, data_file):
     """Runs a C++ program with a config file"""
     cpp_program_path = '../cmake-build-debug/CVRP_optimization_metaheuristics.exe'
+    mingw_dll_path = "C://Program Files//JetBrains//CLion 2023.3.4//bin//mingw//bin"
+    env = os.environ.copy()
+    env["PATH"] = mingw_dll_path + ";" + env["PATH"]
 
     try:
-        result = subprocess.run([cpp_program_path, config_file, data_file], check=True, text=True, capture_output=True)
+        result = subprocess.run([cpp_program_path, config_file, data_file],
+                                env=env,
+                                check=True,
+                                text=True,
+                                capture_output=True)
 
         print("Program output:", result.stdout)
         print("Program error (if any):", result.stderr)
