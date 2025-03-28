@@ -18,8 +18,8 @@ public:
                                                                                Problem& problem,
                                                                                SingleSwapMutation& singleSwapMutation,
                                                                                InversionMutation& inversionMutation,
-                                                                               double (*cooling_scheme)(double, double),
-                                                                               double (*heating_scheme)(double, double),
+                                                                               double (*linear)(double, double),
+                                                                               double (*geometric)(double, double),
                                                                                std::mt19937& randomEngine);
 };
 

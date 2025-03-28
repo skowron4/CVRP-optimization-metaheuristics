@@ -2,7 +2,7 @@
 #include "Utils.h"
 
 bool HybridTabuSAMethod::annealing(int current) {
-    return exp((best_individual.getFitness() - current) / current_temperature) < real_dist(random_engine);
+    return exp((best_individual.getFitness() - current) / current_temperature) > real_dist(random_engine);
 }
 
 bool HybridTabuSAMethod::isBest(Individual &ind, Individual *bestInd) {

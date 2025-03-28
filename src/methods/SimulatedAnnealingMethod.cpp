@@ -2,7 +2,7 @@
 #include "Utils.h"
 
 bool SimulatedAnnealingMethod::annealing(int currentScore) {
-    return exp((best_individual.getFitness() - currentScore) / current_temperature) < real_dist(random_engine);
+    return exp((best_individual.getFitness() - currentScore) / current_temperature) > real_dist(random_engine);
 }
 
 Individual *SimulatedAnnealingMethod::findBestIndividual(vector<Individual> &individuals) {

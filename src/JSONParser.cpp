@@ -24,8 +24,8 @@ unordered_map<string, unique_ptr<Method>> JSONParser::parseJSONAndCreateMethods(
                                                                     Problem& problem,
                                                                     SingleSwapMutation& singleSwapMutation,
                                                                     InversionMutation& inversionMutation,
-                                                                    double (*cooling_scheme)(double, double),
-                                                                    double (*heating_scheme)(double, double),
+                                                                    double (*linear)(double, double),
+                                                                    double (*geometric)(double, double),
                                                                     std::mt19937& randomEngine) {
     unordered_map<string, unique_ptr<Method>> methods;
     for (auto& [key, methodConfig] : config.items()) {
@@ -34,8 +34,8 @@ unordered_map<string, unique_ptr<Method>> JSONParser::parseJSONAndCreateMethods(
                                                              problem,
                                                              singleSwapMutation,
                                                              inversionMutation,
-                                                             cooling_scheme,
-                                                             heating_scheme,
+                                                             linear,
+                                                             geometric,
                                                              randomEngine);
             if (method) methods.emplace(key, std::move(method));
             else cout << "Unknown method name: " << methodConfig.at("name").get<string>() << endl;
