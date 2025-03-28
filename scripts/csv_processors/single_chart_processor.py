@@ -1,3 +1,4 @@
+import os
 import matplotlib.pyplot as plt
 from .csv_processor import CSVProcessor
 
@@ -14,6 +15,9 @@ class SingleChartProcessor(CSVProcessor):
         best_overall = best.min()
         cumulative_best = best.cummin()
 
+        # Extract file name without extension
+        file_name = os.path.splitext(os.path.basename(output_filepath))[0]
+
         plt.figure(figsize=(10, 6))
         plt.plot(iterations, best, label=f'Best (Overall: {best_overall})', color='blue')
         plt.plot(iterations, worst, label='Worst', color='red')
@@ -22,7 +26,7 @@ class SingleChartProcessor(CSVProcessor):
 
         plt.xlabel('Iterations')
         plt.ylabel('Fitness')
-        plt.title('Fitness Statistics Over Iterations')
+        plt.title(f'Fitness Statistics Over Iterations\n{file_name}')
         plt.legend()
         plt.savefig(output_filepath)
         plt.close()
