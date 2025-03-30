@@ -5,20 +5,11 @@ bool SimulatedAnnealingMethod::annealing(double newIndScore, double oldIndScore)
     return exp((oldIndScore - newIndScore) / current_temperature) > real_dist(random_engine);
 }
 
-Individual *SimulatedAnnealingMethod::findCurrentBestIndividual(vector<Individual> &individuals) {
-    Individual *bestInd = nullptr;
-
+Individual& SimulatedAnnealingMethod::findBestIndividual(vector<Individual> &individuals, Individual &currentInd) {
     for (auto &ind: individuals)
-        if (bestInd == nullptr || *bestInd > ind)
-            bestInd = &ind;
-
-    return bestInd;
-}
-
-Individual &SimulatedAnnealingMethod::findBestIndividual(Individual &ind1,
-                                                         Individual &ind2) {
-    if (ind2 > ind1 || annealing(ind1.getFitness(), ind2.getFitness())) return ind1;
-    return ind2;
+        if (currentInd > ind || annealing(ind.getFitness(), currentInd.getFitness()))
+            currentInd = ind;
+    return currentInd;
 }
 
 void SimulatedAnnealingMethod::cooling() {
@@ -28,7 +19,7 @@ void SimulatedAnnealingMethod::cooling() {
 
 void SimulatedAnnealingMethod::algorithmStep(Individual &currentBestIndividual, vector<Individual> &neighborhood) {
     neighborhood = generateNeighbourhood(currentBestIndividual, mutation, neighbourhood_size);
-    currentBestIndividual = findBestIndividual(*findCurrentBestIndividual(neighborhood), currentBestIndividual);
+    currentBestIndividual = findBestIndividual(neighborhood, currentBestIndividual);
 
     if (currentBestIndividual < best_individual) best_individual = currentBestIndividual;
 

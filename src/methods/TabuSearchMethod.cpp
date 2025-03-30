@@ -1,21 +1,19 @@
 #include <algorithm>
 #include "Methods.h"
 
-Individual *TabuSearchMethod::findCurrentBestIndividual(vector<Individual> &individuals) {
-    Individual *bestInd = nullptr;
+Individual& TabuSearchMethod::findBestIndividual(vector<Individual> &individuals, Individual &currentInd) {
+    Individual *best = nullptr;
 
-    for (auto &ind: individuals)
-        if (!tabu_list.contains(ind) && (bestInd == nullptr || *bestInd > ind)) bestInd = &ind;
+    for (Individual &ind : individuals)
+        if (!tabu_list.contains(ind) && (best == nullptr || *best > ind)) best = &ind;
 
-    return bestInd;
+    if (best) return *best;
+    return currentInd;
 }
 
 void TabuSearchMethod::algorithmStep(Individual &currentIndividual, vector<Individual> &neighborhood) {
     neighborhood = generateNeighbourhood(currentIndividual, mutation, neighbourhood_size);
-    auto temp = findCurrentBestIndividual(neighborhood);
-
-    if (!temp) return;
-    currentIndividual = *temp;
+    currentIndividual = findBestIndividual(neighborhood, currentIndividual);
 
     if (currentIndividual < best_individual) {
         best_individual = currentIndividual;

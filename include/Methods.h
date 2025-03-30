@@ -25,7 +25,7 @@ protected:
 private:
     virtual void algorithmStep(Individual &currentIndividual, vector<Individual> &neighborhood) = 0;
 
-    virtual Individual* findCurrentBestIndividual(vector<Individual> &individuals) = 0;
+    virtual Individual& findBestIndividual(vector<Individual> &individuals, Individual &currentInd) = 0;
 
     virtual unique_ptr<Method> clone() const = 0;
 
@@ -66,7 +66,7 @@ private:
 
     void algorithmStep(Individual &currentIndividual, vector<Individual> &neighborhood) override;
 
-    Individual* findCurrentBestIndividual(vector<Individual> &neighborhood) override;
+    Individual& findBestIndividual(vector<Individual> &individuals, Individual &currentInd) override;
 
     void reset() override;
 
@@ -116,9 +116,7 @@ private:
 
     void algorithmStep(Individual &currentBestIndividual, vector<Individual> &neighborhood) override;
 
-    Individual* findCurrentBestIndividual(vector<Individual> &individuals) override;
-
-    Individual& findBestIndividual(Individual &ind1, Individual &ind2);
+    Individual& findBestIndividual(vector<Individual> &individuals, Individual &currentInd) override;
 
 public:
     SimulatedAnnealingMethod(Problem &problem,
@@ -186,9 +184,7 @@ private:
 
     void algorithmStep(Individual &currentBestIndividual, vector<Individual> &neighborhood) override;
 
-    Individual* findCurrentBestIndividual(vector<Individual> &neighborhood) override;
-
-    Individual& findBestIndividual(Individual &ind1, Individual &ind2);
+    Individual& findBestIndividual(vector<Individual> &individuals, Individual &currentInd) override;
 
 public:
     HybridTabuSAMethod(Problem &problem,

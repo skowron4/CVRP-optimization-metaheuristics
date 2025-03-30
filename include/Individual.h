@@ -15,7 +15,7 @@ class Individual {
 private:
     Problem &problem;
     vector<int> genotype;
-    mutable double fitness;
+    mutable int fitness;
     mutable bool is_evaluated;
 
 public:
@@ -68,7 +68,7 @@ public:
 
     bool operator==(const Individual &other) const;
 
-    double getFitness() const;
+    int getFitness() const;
 
     bool compareGenotype(const vector<int>& vec1, const vector<int>& vec2) const;
 

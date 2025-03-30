@@ -28,24 +28,17 @@ void HybridTabuSAMethod::updateTemperature(bool &isCooling, int &iterToChange) {
     else isCooling = heating();
 }
 
-Individual* HybridTabuSAMethod::findCurrentBestIndividual(vector<Individual> &individuals) {
-    Individual *bestInd = nullptr;
+Individual& HybridTabuSAMethod::findBestIndividual(vector<Individual> &individuals, Individual &bestInd) {
 
-    for (auto& ind : individuals)
-        if (isBest(ind, bestInd)) bestInd = &ind;
-
+    for (auto &ind: individuals)
+        if (bestInd > ind || annealing(ind.getFitness(), bestInd.getFitness()))
+            bestInd = ind;
     return bestInd;
-}
-
-Individual &HybridTabuSAMethod::findBestIndividual(Individual &ind1,
-                                                         Individual &ind2) {
-    if (ind2 > ind1 || annealing(ind1.getFitness(), ind2.getFitness())) return ind1;
-    return ind2;
 }
 
 void HybridTabuSAMethod::algorithmStep(Individual &currentBestIndividual, vector<Individual> &neighborhood) {
     neighborhood = generateNeighbourhood(currentBestIndividual, mutation, neighbourhood_size);
-    currentBestIndividual = findBestIndividual(*findCurrentBestIndividual(neighborhood), currentBestIndividual);
+    currentBestIndividual = findBestIndividual(neighborhood, currentBestIndividual);
 
     if (currentBestIndividual < best_individual) {
         best_individual = currentBestIndividual;

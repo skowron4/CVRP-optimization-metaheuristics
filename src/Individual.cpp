@@ -27,7 +27,7 @@ bool Individual::operator==(const Individual &other) const { genotype == other.g
     || compareGenotype(genotype, other.genotype);
 }
 
-double Individual::getFitness() const {
+int Individual::getFitness() const {
     if (!is_evaluated) {
         fitness = problem.evaluateGenotype(genotype);
         is_evaluated = true;
