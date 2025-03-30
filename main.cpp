@@ -40,8 +40,8 @@ int main(int argc, char* argv[]) {
                                                   problem,
                                                   singleSwapMutation,
                                                   inversionMutation,
-                                                  geometric,
                                                   linear,
+                                                  geometric,
                                                   randomEngine);
 
     MethodRunner runner(problem, config, methods);
