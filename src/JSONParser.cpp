@@ -1,7 +1,3 @@
-//
-// Created by User on 26.03.2025.
-//
-
 #include "JSONParser.h"
 #include <fstream>
 #include "Methods.h"

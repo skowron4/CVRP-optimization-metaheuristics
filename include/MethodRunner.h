@@ -9,12 +9,12 @@ using json = nlohmann::json;
 
 class MethodRunner {
 public:
-    MethodRunner(Problem &problem,
-                 const json &config,
-                 std::unordered_map<std::string, std::unique_ptr<Method>> &methods) :
-            problem(problem),
-            config(config),
-            methods(methods) {}
+    MethodRunner(Problem& problem,
+                 const json& config,
+                 std::unordered_map<std::string, std::unique_ptr<Method>>& methods) :
+                 problem(problem),
+                 config(config),
+                 methods(methods) {}
 
     void runMethods();
 
@@ -33,5 +33,4 @@ private:
 
     vector<Method *> getSelectedMethods(const json &config, const string &key);
 };
-
 #endif //CVRP_OPTIMIZATION_METAHEURISTICS_METHODRUNNER_H

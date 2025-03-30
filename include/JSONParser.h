@@ -13,7 +13,6 @@ using namespace std;
 class JSONParser {
 public:
     static json loadJSON(const string& filePath);
-
     static unordered_map<string, unique_ptr<Method>> parseJSONAndCreateMethods(const json& config,
                                                                                Problem& problem,
                                                                                SingleSwapMutation& singleSwapMutation,

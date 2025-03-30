@@ -103,6 +103,7 @@ string HybridTabuSAMethod::getFileName() const {
            "iterHeat_" + to_string(iteration_to_start_heating) + "_" +
            "coolScheme_" + cool_scheme_name + "_" +
            "heatScheme_" + heat_scheme_name;
+
 }
 
 void HybridTabuSAMethod::reset() {

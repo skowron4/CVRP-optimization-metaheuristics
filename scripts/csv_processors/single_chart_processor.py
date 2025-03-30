@@ -17,7 +17,7 @@ class SingleChartProcessor(CSVProcessor):
 
         # Extract file name without extension
         file_name = os.path.splitext(os.path.basename(output_filepath))[0]
-
+        
         plt.figure(figsize=(10, 6))
         plt.plot(iterations, best, label=f'Best (Overall: {best_overall})', color='blue')
         plt.plot(iterations, worst, label='Worst', color='red')
