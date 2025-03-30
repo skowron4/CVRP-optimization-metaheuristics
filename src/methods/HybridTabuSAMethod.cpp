@@ -1,12 +1,12 @@
 #include "Methods.h"
 #include "Utils.h"
 
-bool HybridTabuSAMethod::annealing(int current) {
-    return exp((best_individual.getFitness() - current) / current_temperature) > real_dist(random_engine);
+bool HybridTabuSAMethod::annealing(double newIndScore, double oldIndScore) {
+    return exp((oldIndScore - newIndScore) / current_temperature) > real_dist(random_engine);
 }
 
 bool HybridTabuSAMethod::isBest(Individual &ind, Individual *bestInd) {
-    return !tabu_list.contains(ind) && (bestInd == nullptr || *bestInd > ind || annealing(ind.getFitness()));
+    return !tabu_list.contains(ind) && (bestInd == nullptr || *bestInd > ind);
 }
 
 bool HybridTabuSAMethod::cooling() {
@@ -28,24 +28,28 @@ void HybridTabuSAMethod::updateTemperature(bool &isCooling, int &iterToChange) {
     else isCooling = heating();
 }
 
-Individual* HybridTabuSAMethod::findBestIndividual(vector<Individual> &individuals) {
+Individual* HybridTabuSAMethod::findCurrentBestIndividual(vector<Individual> &individuals) {
     Individual *bestInd = nullptr;
 
-    for (auto& ind : individuals) if (isBest(ind, bestInd)) bestInd = &ind;
+    for (auto& ind : individuals)
+        if (isBest(ind, bestInd)) bestInd = &ind;
 
     return bestInd;
 }
 
-void HybridTabuSAMethod::algorithmStep(Individual &currentIndividual, vector<Individual> &neighborhood) {
-    neighborhood = generateNeighbourhood(currentIndividual, mutation, neighbourhood_size);
-    auto tempInd = findBestIndividual(neighborhood);
+Individual &HybridTabuSAMethod::findBestIndividual(Individual &ind1,
+                                                         Individual &ind2) {
+    if (ind2 > ind1 || annealing(ind1.getFitness(), ind2.getFitness())) return ind1;
+    return ind2;
+}
 
-    if (!tempInd) return;
-    currentIndividual = *tempInd;
+void HybridTabuSAMethod::algorithmStep(Individual &currentBestIndividual, vector<Individual> &neighborhood) {
+    neighborhood = generateNeighbourhood(currentBestIndividual, mutation, neighbourhood_size);
+    currentBestIndividual = findBestIndividual(*findCurrentBestIndividual(neighborhood), currentBestIndividual);
 
-    if (currentIndividual < best_individual) {
-        best_individual = currentIndividual;
-        tabu_list.add(currentIndividual);
+    if (currentBestIndividual < best_individual) {
+        best_individual = currentBestIndividual;
+        tabu_list.add(currentBestIndividual);
     }
 }
 

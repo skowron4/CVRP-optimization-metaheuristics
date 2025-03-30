@@ -13,7 +13,7 @@ class Problem {
 private:
     Loader::Data data;
 
-    vector<vector<int>> distance_matrix;
+    vector<vector<double>> distance_matrix;
     int genotype_size, cities_count;
 
     void computeDistanceMatrix();
@@ -27,7 +27,7 @@ public:
         computeDistanceMatrix();
     };
 
-    int evaluateGenotype(const vector<int> &genotype) const;
+    double evaluateGenotype(const vector<int> &genotype) const;
 
     Individual createRandomIndividual(mt19937 &random_engine);
 

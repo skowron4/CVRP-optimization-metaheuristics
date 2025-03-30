@@ -1,7 +1,7 @@
 #include <algorithm>
 #include "Methods.h"
 
-Individual *TabuSearchMethod::findBestIndividual(vector<Individual> &individuals) {
+Individual *TabuSearchMethod::findCurrentBestIndividual(vector<Individual> &individuals) {
     Individual *bestInd = nullptr;
 
     for (auto &ind: individuals)
@@ -12,7 +12,7 @@ Individual *TabuSearchMethod::findBestIndividual(vector<Individual> &individuals
 
 void TabuSearchMethod::algorithmStep(Individual &currentIndividual, vector<Individual> &neighborhood) {
     neighborhood = generateNeighbourhood(currentIndividual, mutation, neighbourhood_size);
-    auto temp = findBestIndividual(neighborhood);
+    auto temp = findCurrentBestIndividual(neighborhood);
 
     if (!temp) return;
     currentIndividual = *temp;

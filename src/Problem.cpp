@@ -5,11 +5,15 @@
 #include <algorithm>
 
 void Problem::computeDistanceMatrix() {
-    distance_matrix.resize(data.dimension, vector<int>(data.dimension, 0));
+    distance_matrix.resize(data.dimension, vector<double>(data.dimension, 0));
     for (int i = 0; i < data.dimension; i++) {
         for (int j = i + 1; j < data.dimension; j++) {
-            int x1{data.cities[i].x}, y1{data.cities[i].y}, x2{data.cities[j].x}, y2{data.cities[j].y};
-            int distance = static_cast<int>(round(sqrt(pow(x1 - x2, 2) + pow(y1 - y2, 2))));
+            double x1{static_cast<double>(data.cities[i].x)},
+            y1{static_cast<double>(data.cities[i].y)},
+            x2{static_cast<double>(data.cities[j].x)},
+            y2{static_cast<double>(data.cities[j].y)};
+
+            double distance = static_cast<double>(sqrt(pow(x1 - x2, 2) + pow(y1 - y2, 2)));
             distance_matrix[i][j] = distance;
             distance_matrix[j][i] = distance;
         }
@@ -29,11 +33,12 @@ Individual Problem::createGreedyIndividual(int startingCity) {
 
     int i{1}, curr{startingCity}, currLoad{data.capacity - data.demands[startingCity - 1].value};
     while (!cities.empty()) {
-        int minDist{numeric_limits<int>::max()}, next{data.depot};
+        double minDist{numeric_limits<double>::max()};
+        int next{data.depot};
 
         for (int city: cities) {
             if (currLoad - data.demands[city - 1].value < 0) continue;
-            int dist{distance_matrix[curr - 1][city - 1]};
+            double dist{distance_matrix[curr - 1][city - 1]};
             if (dist < minDist) {
                 minDist = dist;
                 next = city;
@@ -54,8 +59,9 @@ Individual Problem::createGreedyIndividual(int startingCity) {
     return {*this, genotype};
 }
 
-int Problem::evaluateGenotype(const vector<int> &genotype) const {
-    int curr{data.depot}, currLoad{data.capacity}, dist{0};
+double Problem::evaluateGenotype(const vector<int> &genotype) const {
+    int curr{data.depot}, currLoad{data.capacity};
+    double dist{0.0};
 
     for (int next: genotype) {
         if (next == 0) {

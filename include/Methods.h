@@ -25,7 +25,7 @@ protected:
 private:
     virtual void algorithmStep(Individual &currentIndividual, vector<Individual> &neighborhood) = 0;
 
-    virtual Individual* findBestIndividual(vector<Individual> &individuals) = 0;
+    virtual Individual* findCurrentBestIndividual(vector<Individual> &individuals) = 0;
 
     virtual unique_ptr<Method> clone() const = 0;
 
@@ -66,7 +66,7 @@ private:
 
     void algorithmStep(Individual &currentIndividual, vector<Individual> &neighborhood) override;
 
-    Individual* findBestIndividual(vector<Individual> &neighborhood) override;
+    Individual* findCurrentBestIndividual(vector<Individual> &neighborhood) override;
 
     void reset() override;
 
@@ -112,11 +112,13 @@ private:
 
     void cooling();
 
-    bool annealing(int currentScore);
+    bool annealing(double newIndScore, double oldIndScore);
 
-    void algorithmStep(Individual &currentIndividual, vector<Individual> &neighborhood) override;
+    void algorithmStep(Individual &currentBestIndividual, vector<Individual> &neighborhood) override;
 
-    Individual* findBestIndividual(vector<Individual> &neighborhood) override;
+    Individual* findCurrentBestIndividual(vector<Individual> &individuals) override;
+
+    Individual& findBestIndividual(Individual &ind1, Individual &ind2);
 
 public:
     SimulatedAnnealingMethod(Problem &problem,
@@ -174,7 +176,7 @@ private:
 
     bool isBest(Individual &ind, Individual *bestInd);
 
-    bool annealing(int current);
+    bool annealing(double newIndScore, double oldIndScore);
 
     bool cooling();
 
@@ -182,9 +184,11 @@ private:
 
     void updateTemperature(bool &isCooling, int &iterToChange);
 
-    void algorithmStep(Individual &currentIndividual, vector<Individual> &neighborhood) override;
+    void algorithmStep(Individual &currentBestIndividual, vector<Individual> &neighborhood) override;
 
-    Individual* findBestIndividual(vector<Individual> &neighborhood) override;
+    Individual* findCurrentBestIndividual(vector<Individual> &neighborhood) override;
+
+    Individual& findBestIndividual(Individual &ind1, Individual &ind2);
 
 public:
     HybridTabuSAMethod(Problem &problem,

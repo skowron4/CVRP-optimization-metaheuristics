@@ -9,15 +9,25 @@ bool Individual::operator>(const Individual &other) const {
     return getFitness() > other.getFitness();
 }
 
+bool Individual::operator>=(const Individual &other) const {
+    return getFitness() >= other.getFitness();
+}
+
 bool Individual::operator<(const Individual &other) const {
     return getFitness() < other.getFitness();
 }
 
-bool Individual::operator==(const Individual &other) const {
-    return getFitness() == other.getFitness() && genotype == other.genotype;
+bool Individual::operator<=(const Individual &other) const {
+    return getFitness() <= other.getFitness();
 }
 
-int Individual::getFitness() const {
+bool Individual::operator==(const Individual &other) const { genotype == other.genotype;
+    return (is_evaluated && other.is_evaluated
+    && fitness == other.fitness && compareGenotype(genotype, other.genotype))
+    || compareGenotype(genotype, other.genotype);
+}
+
+double Individual::getFitness() const {
     if (!is_evaluated) {
         fitness = problem.evaluateGenotype(genotype);
         is_evaluated = true;
@@ -25,7 +35,37 @@ int Individual::getFitness() const {
     return fitness;
 }
 
+bool Individual::compareGenotype(const vector<int>& vec1, const vector<int>& vec2) const {
+    return simplifyVector(vec1) == simplifyVector(vec2);
+}
+
+vector<int> Individual::simplifyVector(const vector<int>& vec) const {
+    vector<int> simplified;
+    bool zeroFlag = false;
+
+    for (int num : vec) {
+        if (num == 0) {
+            if (!zeroFlag) {
+                simplified.push_back(0);
+                zeroFlag = true;
+            }
+        } else {
+            simplified.push_back(num);
+            zeroFlag = false;
+        }
+    }
+    return simplified;
+}
+
 void Individual::mutate(Mutation &mutation) {
     mutation.mutate(genotype);
     is_evaluated = false;
+}
+
+void Individual::printGenotype() {
+    std::cout << "Genotype: " << getFitness() << std::endl;
+    for (int i: genotype) {
+        std::cout << i << " ";
+    }
+    std::cout << std::endl;
 }
