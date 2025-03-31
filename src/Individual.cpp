@@ -22,9 +22,8 @@ bool Individual::operator<=(const Individual &other) const {
 }
 
 bool Individual::operator==(const Individual &other) const {
-    return (is_evaluated && other.is_evaluated
-    && fitness == other.fitness && compareGenotype(genotype, other.genotype))
-    || compareGenotype(genotype, other.genotype);
+    return getFitness() == other.getFitness()
+    && compareGenotype(genotype, other.genotype);
 }
 
 int Individual::getFitness() const {
