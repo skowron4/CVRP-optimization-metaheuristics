@@ -12,8 +12,6 @@ protected:
 
     explicit Mutation(mt19937 &randomEngine) : random_engine(randomEngine) {};
 
-    void updateIndices(size_t genotype_size);
-
 public:
     virtual void mutate(vector<int> &genotype) = 0;
 
