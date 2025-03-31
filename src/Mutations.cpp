@@ -1,17 +1,9 @@
 #include <algorithm>
+#include <iostream>
 #include "Mutations.h"
-
-void Mutation::updateIndices(size_t genotype_size) {
-    if (indices.size() != genotype_size) {
-        indices.resize(genotype_size);
-        iota(indices.begin(), indices.end(), 0);
-    }
-}
 
 void SingleSwapMutation::mutate(vector<int> &genotype) {
     if (genotype.size() < 2) return;
-
-    updateIndices(genotype.size());
 
     vector<int> chosen(2);
 
@@ -24,17 +16,17 @@ void SingleSwapMutation::mutate(vector<int> &genotype) {
 void InversionMutation::mutate(vector<int> &genotype) {
     if (genotype.size() < 2) return;
 
-    updateIndices(genotype.size());
-
-    vector<int> chosen(2);
     int left, right;
+    std::uniform_int_distribution<int> int_dist(0, genotype.size() - 1);
+    left = int_dist(random_engine);
 
     do {
-        sample(indices.begin(), indices.end(), chosen.begin(), 2, random_engine);
-        left = min(chosen[0], chosen[1]);
-        right = max(chosen[0], chosen[1]);
-    } while (all_of(genotype.begin() + left, genotype.begin() + right, [](int val) { return val == 0; })
-    || (genotype[left] == 0 && genotype[right - 1] == 0) || ((left > 0 && genotype[left - 1] == 0) && (right < genotype.size() - 2 && genotype[right] == 0)));
+        right = int_dist(random_engine);
+        if (left > right) swap(left, right);
+    } while (
+            (genotype[left] == 0 && genotype[right] == 0) ||
+            ((left > 0 && genotype[left - 1] == 0) && (right < genotype.size() - 1 && genotype[right + 1] == 0)) ||
+            left == right);
 
-    reverse(genotype.begin() + left, genotype.begin() + right);
+    reverse(genotype.begin() + left, genotype.begin() + right + 1);
 }
