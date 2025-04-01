@@ -15,8 +15,7 @@ class SingleChartProcessor(CSVProcessor):
         best_overall = best.min()
         cumulative_best = best.cummin()
 
-        # Extract file name without extension
-        file_name = os.path.splitext(os.path.basename(output_filepath))[0]
+        file_name = self._file_name_without_extension(output_filepath)
         
         plt.figure(figsize=(10, 6))
         plt.plot(iterations, best, label=f'Best (Overall: {best_overall})', color='blue')
