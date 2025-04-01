@@ -9,7 +9,6 @@ void SingleSwapMutation::mutate(vector<int> &genotype) {
     int left = int_dist(random_engine);
     int right;
 
-    // continue IF (genotype[left] == 0 and genotype[right]) == 0 OR (right == left)
     do right = int_dist(random_engine);
     while (genotype[left] == genotype[right]);
 
