@@ -36,18 +36,19 @@ int Individual::getFitness() const {
 }
 
 bool Individual::compareGenotype(const vector<int>& vec1, const vector<int>& vec2) const {
-    return simplifyVector(vec1) == simplifyVector(vec2);
-}
+    auto first_non_zero_vec1 = find_if(vec1.begin(), vec1.end(), [](int i) { return i != 0; });
+    auto last_non_zero_vec1 = find_if(vec1.rbegin(), vec1.rend(), [](int i) { return i != 0; }).base();
 
-vector<int> Individual::simplifyVector(const vector<int>& vec) const {
-    auto first_non_zero = find_if(vec.begin(), vec.end(), [](int i) { return i != 0; });
-    auto last_non_zero = find_if(vec.rbegin(), vec.rend(), [](int i) { return i != 0; }).base();
+    auto first_non_zero_vec2 = find_if(vec2.begin(), vec2.end(), [](int i) { return i != 0; });
+    auto last_non_zero_vec2 = find_if(vec2.rbegin(), vec2.rend(), [](int i) { return i != 0; }).base();
 
-    vector<int> simplified(first_non_zero, last_non_zero);
-    auto last = unique(simplified.begin(), simplified.end());
-    simplified.erase(last, simplified.end());
+    vector<int> simplified_vec1(first_non_zero_vec1, last_non_zero_vec1);
+    vector<int> simplified_vec2(first_non_zero_vec2, last_non_zero_vec2);
 
-    return simplified;
+    auto last_vec1 = unique(simplified_vec1.begin(), simplified_vec1.end());
+    auto last_vec2 = unique(simplified_vec2.begin(), simplified_vec2.end());
+
+    return equal(simplified_vec1.begin(), last_vec1 - 1, simplified_vec2.begin(), last_vec2 - 1);
 }
 
 void Individual::mutate(Mutation &mutation) {

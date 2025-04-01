@@ -5,10 +5,6 @@ bool HybridTabuSAMethod::annealing(double newIndScore, double oldIndScore) {
     return exp((oldIndScore - newIndScore) / current_temperature) > real_dist(random_engine);
 }
 
-bool HybridTabuSAMethod::isBest(Individual &ind, Individual *bestInd) {
-    return !tabu_list.contains(ind) && (bestInd == nullptr || *bestInd > ind);
-}
-
 bool HybridTabuSAMethod::cooling() {
     current_temperature = max(cooling_scheme(current_temperature, cooling_ratio), final_temperature);
     return current_temperature == final_temperature;
@@ -30,7 +26,9 @@ void HybridTabuSAMethod::updateTemperature(bool &isCooling, int &iterToChange) {
 
 Individual& HybridTabuSAMethod::findBestIndividual(vector<Individual> &individuals, Individual &currentInd) {
     for (auto &ind: individuals)
-        if (currentInd > ind || annealing(ind.getFitness(), currentInd.getFitness()))
+        if (!tabu_list.contains(ind) &&
+            currentInd > ind ||
+            annealing(ind.getFitness(), currentInd.getFitness()))
             currentInd = ind;
     return currentInd;
 }
@@ -102,7 +100,6 @@ string HybridTabuSAMethod::getFileName() const {
            "iterHeat_" + to_string(iteration_to_start_heating) + "_" +
            "coolScheme_" + cool_scheme_name + "_" +
            "heatScheme_" + heat_scheme_name;
-
 }
 
 void HybridTabuSAMethod::reset() {

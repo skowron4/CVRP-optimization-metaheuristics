@@ -20,8 +20,6 @@ private:
 
     bool compareGenotype(const vector<int> &vec1, const vector<int> &vec2) const;
 
-    vector<int> simplifyVector(const vector<int> &vec) const;
-
 public:
     Individual(Problem &problem, const vector<int> &genotype) :
             problem(problem),

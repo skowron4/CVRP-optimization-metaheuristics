@@ -45,7 +45,10 @@ void Method::runEachMethodManyTimesAndSave(const Problem &problem, const vector<
 
     vector<thread> methodThreads;
     methodThreads.reserve(methods.size());
-    for (int i = 0; i < methods.size(); ++i) methodThreads.emplace_back(runMethodManyTimes, methods[i], i);
+
+    int methodSize = methods.size();
+
+    for (int i = 0; i < methodSize; ++i) methodThreads.emplace_back(runMethodManyTimes, methods[i], i);
     for (auto &thread: methodThreads) thread.join();
 
     // Save results to CSV file
@@ -75,9 +78,9 @@ void Method::runEachMethodManyTimesAndSave(const Problem &problem, const vector<
 
     // Write results
     for (int i = 0; i < numberOfRuns; ++i) {
-        for (int j = 0; j < methods.size(); ++j) {
+        for (int j = 0; j < methodSize; ++j) {
             file << results[j][i].getFitness();
-            if (j != methods.size() - 1) file << ",";
+            if (j != methodSize - 1) file << ",";
         }
         file << "\n";
     }
