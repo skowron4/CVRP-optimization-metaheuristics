@@ -69,14 +69,18 @@ int Problem::evaluateGenotype(const vector<int> &genotype) const {
             currLoad = data.capacity;
             curr = data.depot;
         } else {
-            currLoad -= data.demands[next - 1].value;
+            int demand = data.demands[next - 1].value;
+            currLoad -= demand;
+
             if (currLoad < 0) {
                 dist += distance_matrix[curr - 1][data.depot - 1] + distance_matrix[data.depot - 1][next - 1];
-                currLoad = data.capacity - data.demands[next - 1].value;
+                currLoad = data.capacity - demand;
             } else dist += distance_matrix[curr - 1][next - 1];
+
             curr = next;
         }
     }
+
     return dist + distance_matrix[curr - 1][data.depot - 1];
 }
 
