@@ -19,7 +19,7 @@ class CSVProcessor:
         os.makedirs(self.output_directory, exist_ok=True)
         self._traverse_directory()
 
-    def _traverse_directory(self):
+    def __traverse_directory(self):
         with ProcessPoolExecutor() as executor:
             futures = []
             for filename in os.listdir(self.input_directory):
@@ -35,7 +35,7 @@ class CSVProcessor:
             for future in futures:
                 future.result()
 
-    def _process_file(self, input_filepath, output_filepath):
+    def __process_file(self, input_filepath, output_filepath):
         try:
             df = pd.read_csv(input_filepath)
         except Exception as e:
@@ -48,6 +48,9 @@ class CSVProcessor:
             logging.info(f"Processed and saved plot for {input_filepath}")
         except Exception as e:
             logging.error(f"Error processing {input_filepath}: {e}")
+
+    def _file_name_without_extension(self, file_path):
+        return os.path.splitext(os.path.basename(file_path))[0]
 
     def _extract_data(self, df):
         raise NotImplementedError("Subclasses must implement this method")
