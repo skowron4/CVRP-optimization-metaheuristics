@@ -10,12 +10,12 @@ bool HybridTabuSAMethod::isBest(Individual &ind, Individual *bestInd) {
 }
 
 bool HybridTabuSAMethod::cooling() {
-    current_temperature = std::max(cooling_scheme(current_temperature, cooling_ratio), final_temperature);
+    current_temperature = max(cooling_scheme(current_temperature, cooling_ratio), final_temperature);
     return current_temperature > final_temperature;
 }
 
 bool HybridTabuSAMethod::heating() {
-    current_temperature = std::min(heating_scheme(current_temperature, heating_ratio), max_heating_temperature);
+    current_temperature = min(heating_scheme(current_temperature, heating_ratio), max_heating_temperature);
     return current_temperature == max_heating_temperature;
 }
 

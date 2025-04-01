@@ -6,18 +6,19 @@
 #include <json.hpp>
 
 using json = nlohmann::json;
+using namespace std;
 
 class MethodFactory {
 public:
-    static std::unique_ptr<Method> createMethodFromJson(
+    static unique_ptr<Method> createMethodFromJson(
             const json& methodConfig,
             Problem& problem,
             SingleSwapMutation& singleSwapMutation,
             InversionMutation& inversionMutation,
             double (*linear)(double, double),
             double (*geometric)(double, double),
-            std::mt19937& randomEngine) {
-        std::string name = parseString(methodConfig, "name");
+            mt19937& randomEngine) {
+        string name = parseString(methodConfig, "name");
 
         Mutation* mutation = selectMutation(methodConfig, singleSwapMutation, inversionMutation);
 
@@ -28,42 +29,38 @@ public:
         else if (name == "hybrid")
             return createHybridTabuSAMethod(methodConfig, problem, mutation, randomEngine, linear, geometric);
 
-
         return nullptr;
     }
 
 private:
-    static std::string parseString(const json& methodConfig, const std::string& key);
+    static string parseString(const json& methodConfig, const string& key);
 
-    static int parseInt(const json& methodConfig, const std::string& key);
+    static int parseInt(const json& methodConfig, const string& key);
 
-    static double parseDouble(const json& methodConfig, const std::string& key);
+    static double parseDouble(const json& methodConfig, const string& key);
 
     static Mutation* selectMutation(const json& methodConfig,
                              SingleSwapMutation& singleSwapMutation,
                              InversionMutation& inversionMutation);
 
-    static std::unique_ptr<Method> createTabuMethod(const json& methodConfig,
+    static unique_ptr<Method> createTabuMethod(const json& methodConfig,
                                              Problem& problem,
                                              Mutation* mutation,
-                                             std::mt19937& randomEngine);
+                                             mt19937& randomEngine);
 
-    static std::unique_ptr<Method> createSimulatedAnnealingMethod(const json& methodConfig,
+    static unique_ptr<Method> createSimulatedAnnealingMethod(const json& methodConfig,
                                                            Problem& problem,
                                                            Mutation* mutation,
-                                                           std::mt19937& randomEngine,
+                                                           mt19937& randomEngine,
                                                            double (*linear)(double, double),
                                                            double (*geometric)(double, double));
 
-    static std::unique_ptr<Method> createHybridTabuSAMethod(const json& methodConfig,
+    static unique_ptr<Method> createHybridTabuSAMethod(const json& methodConfig,
                                                      Problem& problem,
                                                      Mutation* mutation,
-                                                     std::mt19937& randomEngine,
+                                                     mt19937& randomEngine,
                                                      double (*linear)(double, double),
                                                      double (*geometric)(double, double));
-
-
 };
-
 
 #endif //CVRP_OPTIMIZATION_METAHEURISTICS_METHODFACTORY_H
