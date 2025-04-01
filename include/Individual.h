@@ -18,6 +18,10 @@ private:
     mutable int fitness;
     mutable bool is_evaluated;
 
+    bool compareGenotype(const vector<int> &vec1, const vector<int> &vec2) const;
+
+    vector<int> simplifyVector(const vector<int> &vec) const;
+
 public:
     Individual(Problem &problem, const vector<int> &genotype) :
             problem(problem),
@@ -41,18 +45,15 @@ public:
         return *this;
     }
 
-    void printGenotype();
-
     struct Hash {
         size_t operator()(const Individual &individual) const {
-            size_t hash_value = std::hash<int>()(individual.getFitness());
-            return hash_value;
+            return hash<int>()(individual.getFitness());
         }
     };
 
     struct Equal {
         bool operator()(const Individual &lhs, const Individual &rhs) const {
-            return lhs.getFitness() == rhs.getFitness() && lhs.genotype == rhs.genotype;
+            return lhs == rhs;
         }
     };
 
@@ -70,11 +71,9 @@ public:
 
     int getFitness() const;
 
-    bool compareGenotype(const vector<int>& vec1, const vector<int>& vec2) const;
-
-    vector<int> simplifyVector(const vector<int>& vec) const;
-
     void mutate(Mutation &mutation);
+
+    void printGenotype() const;
 };
 
 #endif //INDIVIDUAL_H
