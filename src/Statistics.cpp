@@ -11,15 +11,17 @@ void Statistics::calculateAndAddStatisticsFitnessRecord(const vector<Individual>
 Statistics::FitnessRecord Statistics::calculateFitnessRecord(const vector<Individual> &individuals) {
     FitnessRecord record;
 
-    record.best = min_element(individuals.begin(), individuals.end())->getFitness();
-    record.worst = max_element(individuals.begin(), individuals.end())->getFitness();
+    auto minmax = minmax_element(individuals.begin(), individuals.end());
+    record.best = minmax.first->getFitness();
+    record.worst = minmax.second->getFitness();
 
-    record.avg = static_cast<double>(accumulate(individuals.begin(), individuals.end(), 0, [](int sum, const Individual &individual) {
-        return sum + individual.getFitness();
-    })) / individuals.size();
+    int sum = accumulate(individuals.begin(), individuals.end(), 0, [](int acc, const Individual &individual) {
+        return acc + individual.getFitness();
+    });
+    record.avg = static_cast<double>(sum) / individuals.size();
 
-    double variance = accumulate(individuals.begin(), individuals.end(), 0.0, [&](double sum, const Individual &individual) {
-        return sum + pow(individual.getFitness() - record.avg, 2);
+    double variance = accumulate(individuals.begin(), individuals.end(), 0.0, [&](double acc, const Individual &individual) {
+        return acc + pow(individual.getFitness() - record.avg, 2);
     });
     record.stdDev = sqrt(variance / individuals.size());
 
