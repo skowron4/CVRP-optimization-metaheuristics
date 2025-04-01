@@ -61,7 +61,7 @@ string SimulatedAnnealingMethod::getFileName() const {
     return problem.getName() + "_" + short_name + "_" +
            "mut_" + mutation.getName() + "_" +
            "iter_" + to_string(iterations) + "_" +
-           "neigh_" + to_string(neighbourhood_size) + "_" +
+           "nbh" + to_string(neighbourhood_size) + "_" +
            "T0_" + doubleToString(initial_temperature) + "_" +
            "Tf_" + doubleToString(final_temperature) + "_" +
            "coolScheme_" + cool_scheme_name + "_" +
