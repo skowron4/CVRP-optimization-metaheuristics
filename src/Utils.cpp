@@ -6,16 +6,16 @@ string getCurrentTimestamp() {
     tm *now_tm = localtime(&now_time);
 
     ostringstream oss;
-    oss << put_time(now_tm, "%d-%m-%Y_%H-%M-%S");
+    oss << put_time(now_tm, "%d-%m_%H-%M-%S");
     return oss.str();
 }
 
-std::string doubleToString(double value) {
+string doubleToString(double value) {
     ostringstream oss;
-    oss << fixed << setprecision(6) << value;
-
+    oss << fixed << value;
     string str = oss.str();
-    str.erase(str.find_last_not_of('0') + 1, string::npos);
+
+    str.erase(str.find_last_not_of('0') + 1);
     if (str.back() == '.') str.pop_back();
     return str;
 }
