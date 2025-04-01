@@ -19,8 +19,7 @@ public:
                                                                                InversionMutation& inversionMutation,
                                                                                double (*linear)(double, double),
                                                                                double (*geometric)(double, double),
-                                                                               std::mt19937& randomEngine);
+                                                                               mt19937& randomEngine);
 };
-
 
 #endif //CVRP_OPTIMIZATION_METAHEURISTICS_JSONPARSER_H

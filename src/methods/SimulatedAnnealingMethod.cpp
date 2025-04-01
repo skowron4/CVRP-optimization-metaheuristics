@@ -14,7 +14,7 @@ Individual& SimulatedAnnealingMethod::findBestIndividual(vector<Individual> &ind
 
 void SimulatedAnnealingMethod::cooling() {
     if (current_temperature > final_temperature)
-        current_temperature = std::max(cooling_scheme(current_temperature, cooling_ratio), final_temperature);
+        current_temperature = max(cooling_scheme(current_temperature, cooling_ratio), final_temperature);
 }
 
 void SimulatedAnnealingMethod::algorithmStep(Individual &currentBestIndividual, vector<Individual> &neighborhood) {

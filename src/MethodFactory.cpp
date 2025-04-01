@@ -1,41 +1,34 @@
-//
-// Created by User on 26.03.2025.
-//
-
 #include "MethodFactory.h"
 
-std::string MethodFactory::parseString(const json& methodConfig, const std::string& key) {
-    return methodConfig.at(key).get<std::string>();
+string MethodFactory::parseString(const json& methodConfig, const string& key) {
+    return methodConfig.at(key).get<string>();
 }
 
-int MethodFactory::parseInt(const json& methodConfig, const std::string& key) {
+int MethodFactory::parseInt(const json& methodConfig, const string& key) {
     return methodConfig.at(key).get<int>();
 }
 
-double MethodFactory::parseDouble(const json& methodConfig, const std::string& key) {
+double MethodFactory::parseDouble(const json& methodConfig, const string& key) {
     return methodConfig.at(key).get<double>();
 }
 
 Mutation* MethodFactory::selectMutation(const json& methodConfig,
                          SingleSwapMutation& singleSwapMutation,
                          InversionMutation& inversionMutation) {
-    std::string mutationType = parseString(methodConfig, "mut");
-    if (mutationType == "swap") {
-        return &singleSwapMutation;
-    } else {
-        return &inversionMutation;
-    }
+    string mutationType = parseString(methodConfig, "mut");
+    if (mutationType == "swap") return &singleSwapMutation;
+    else return &inversionMutation;
 }
 
-std::unique_ptr<Method> MethodFactory::createTabuMethod(const json& methodConfig,
+unique_ptr<Method> MethodFactory::createTabuMethod(const json& methodConfig,
                                          Problem& problem,
                                          Mutation* mutation,
-                                         std::mt19937& randomEngine) {
+                                         mt19937& randomEngine) {
     int iterations = parseInt(methodConfig, "iter");
     int tabuSize = parseInt(methodConfig, "tabuSize");
     int neighborhoodSize = parseInt(methodConfig, "neighborhoodSize");
 
-    return std::make_unique<TabuSearchMethod>(problem,
+    return make_unique<TabuSearchMethod>(problem,
                                               iterations,
                                               *mutation,
                                               tabuSize,
@@ -43,10 +36,10 @@ std::unique_ptr<Method> MethodFactory::createTabuMethod(const json& methodConfig
                                               randomEngine);
 }
 
-std::unique_ptr<Method> MethodFactory::createSimulatedAnnealingMethod(const json& methodConfig,
+unique_ptr<Method> MethodFactory::createSimulatedAnnealingMethod(const json& methodConfig,
                                                        Problem& problem,
                                                        Mutation* mutation,
-                                                       std::mt19937& randomEngine,
+                                                       mt19937& randomEngine,
                                                        double (*linear)(double, double),
                                                        double (*geometric)(double, double)) {
     int iterations = parseInt(methodConfig, "iter");
@@ -55,11 +48,11 @@ std::unique_ptr<Method> MethodFactory::createSimulatedAnnealingMethod(const json
     double initTemp = parseDouble(methodConfig, "initTemp");
     double finalTemp = parseDouble(methodConfig, "finalTemp");
     double coolingRatio = parseDouble(methodConfig, "coolingRatio");
-    std::string coolSchemeName = parseString(methodConfig, "coolingScheme");
+    string coolSchemeName = parseString(methodConfig, "coolingScheme");
 
     auto coolingScheme = (coolSchemeName == "linear") ? linear : geometric;
 
-    return std::make_unique<SimulatedAnnealingMethod>(problem,
+    return make_unique<SimulatedAnnealingMethod>(problem,
                                                       iterations,
                                                       *mutation,
                                                       neighborhoodSize,
@@ -71,10 +64,10 @@ std::unique_ptr<Method> MethodFactory::createSimulatedAnnealingMethod(const json
                                                       randomEngine);
 }
 
-std::unique_ptr<Method> MethodFactory::createHybridTabuSAMethod(const json& methodConfig,
+unique_ptr<Method> MethodFactory::createHybridTabuSAMethod(const json& methodConfig,
                                                  Problem& problem,
                                                  Mutation* mutation,
-                                                 std::mt19937& randomEngine,
+                                                 mt19937& randomEngine,
                                                  double (*linear)(double, double),
                                                  double (*geometric)(double, double)) {
     int iterations = parseInt(methodConfig, "iter");
@@ -88,13 +81,13 @@ std::unique_ptr<Method> MethodFactory::createHybridTabuSAMethod(const json& meth
     double coolingRatio = parseDouble(methodConfig, "coolingRatio");
     double heatingRatio = parseDouble(methodConfig, "heatingRatio");
 
-    std::string coolSchemeName = parseString(methodConfig, "coolingScheme");
-    std::string heatSchemeName = parseString(methodConfig, "coolingScheme"); // Assuming same key for heatScheme
+    string coolSchemeName = parseString(methodConfig, "coolingScheme");
+    string heatSchemeName = parseString(methodConfig, "coolingScheme"); // Assuming same key for heatScheme
 
     auto coolingScheme = (coolSchemeName == "linear") ? linear : geometric;
     auto heatingScheme = (heatSchemeName == "linear") ? linear : geometric;
 
-    return std::make_unique<HybridTabuSAMethod>(
+    return make_unique<HybridTabuSAMethod>(
             problem, iterations, iterHeating, *mutation, tabuSize, neighborhoodSize,
             initTemp, finalTemp, maxHeatingTemp, coolingScheme, coolingRatio,
             heatingRatio, heatingScheme, coolSchemeName, heatSchemeName, randomEngine

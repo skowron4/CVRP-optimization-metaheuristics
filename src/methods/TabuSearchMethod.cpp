@@ -7,8 +7,7 @@ Individual& TabuSearchMethod::findBestIndividual(vector<Individual> &individuals
     for (Individual &ind : individuals)
         if (!tabu_list.contains(ind) && (best == nullptr || *best > ind)) best = &ind;
 
-    if (best) return *best;
-    return currentInd;
+    return best ? *best : currentInd;
 }
 
 void TabuSearchMethod::algorithmStep(Individual &currentIndividual, vector<Individual> &neighborhood) {

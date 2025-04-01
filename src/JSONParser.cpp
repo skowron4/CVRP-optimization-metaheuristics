@@ -22,7 +22,7 @@ unordered_map<string, unique_ptr<Method>> JSONParser::parseJSONAndCreateMethods(
                                                                     InversionMutation& inversionMutation,
                                                                     double (*linear)(double, double),
                                                                     double (*geometric)(double, double),
-                                                                    std::mt19937& randomEngine) {
+                                                                    mt19937& randomEngine) {
     unordered_map<string, unique_ptr<Method>> methods;
     for (auto& [key, methodConfig] : config.items()) {
         try {
