@@ -71,3 +71,17 @@ void Loader::parseDepot(ifstream &file, Data &data) {
 bool Loader::validateData(const Data &data) {
     return data.cities.size() == data.dimension && data.demands.size() == data.dimension;
 }
+
+void Loader::Data::print() const {
+    cout << "Name: " << name << endl;
+    cout << "Comment: " << comment << endl;
+    cout << "Type: " << type << endl;
+    cout << "Dimension: " << dimension << endl;
+    cout << "Edge weight type: " << edge_weight_type << endl;
+    cout << "Capacity: " << capacity << endl;
+    cout << "Depot: " << depot << endl;
+
+    cout << "Demands:" << endl;
+    for (auto &demand: demands)
+        cout << "City: " << demand.city_id << " Demand: " << demand.value << endl;
+}

@@ -33,8 +33,6 @@ public:
 
     vector<Individual> createGreedyIndividuals();
 
-    void printData() const;
-
     void printDistanceMatrix() const;
 
     string getName() const { return data.name; }
