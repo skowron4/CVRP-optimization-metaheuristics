@@ -60,7 +60,7 @@ string TabuSearchMethod::getFileName() const {
            "mut_" + mutation.getName() + "_" +
            "iter_" + to_string(iterations) + "_" +
            "tabu_" + to_string(tabu_list_size) + "_" +
-           "neigh_" + to_string(neighbourhood_size);
+           "nbh" + to_string(neighbourhood_size);
 }
 
 void TabuSearchMethod::reset() {
