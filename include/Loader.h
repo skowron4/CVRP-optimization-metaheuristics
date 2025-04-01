@@ -22,6 +22,8 @@ public:
         vector<City> cities;
         vector<Demand> demands;
         int dimension, capacity, depot;
+
+        void print() const;
     };
 
     optional<Data> loadProblemFromFile(const string &filepath);

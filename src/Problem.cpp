@@ -98,20 +98,6 @@ vector<Individual> Problem::createGreedyIndividuals() {
     return individuals;
 }
 
-void Problem::printData() const {
-    cout << "Name: " << data.name << endl;
-    cout << "Comment: " << data.comment << endl;
-    cout << "Type: " << data.type << endl;
-    cout << "Dimension: " << data.dimension << endl;
-    cout << "Edge weight type: " << data.edge_weight_type << endl;
-    cout << "Capacity: " << data.capacity << endl;
-    cout << "Depot: " << data.depot << endl;
-
-    cout << "Demands:" << endl;
-    for (auto &demand: data.demands)
-        cout << "City: " << demand.city_id << " Demand: " << demand.value << endl;
-}
-
 void Problem::printDistanceMatrix() const {
     cout << "Distance matrix:" << endl;
     int cellWidth{4};
