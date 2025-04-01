@@ -39,24 +39,6 @@ bool Individual::compareGenotype(const vector<int>& vec1, const vector<int>& vec
     return simplifyVector(vec1) == simplifyVector(vec2);
 }
 
-//vector<int> Individual::simplifyVector(const vector<int>& vec) const {
-//    vector<int> simplified;
-//    bool zeroFlag = false;
-//
-//    for (int num : vec) {
-//        if (num == 0) {
-//            if (!zeroFlag) {
-//                simplified.push_back(0);
-//                zeroFlag = true;
-//            }
-//        } else {
-//            simplified.push_back(num);
-//            zeroFlag = false;
-//        }
-//    }
-//    return simplified;
-//}
-
 vector<int> Individual::simplifyVector(const vector<int>& vec) const {
     auto first_non_zero = find_if(vec.begin(), vec.end(), [](int i) { return i != 0; });
     auto last_non_zero = find_if(vec.rbegin(), vec.rend(), [](int i) { return i != 0; }).base();

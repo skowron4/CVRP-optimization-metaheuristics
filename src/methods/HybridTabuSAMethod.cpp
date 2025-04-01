@@ -11,7 +11,7 @@ bool HybridTabuSAMethod::isBest(Individual &ind, Individual *bestInd) {
 
 bool HybridTabuSAMethod::cooling() {
     current_temperature = max(cooling_scheme(current_temperature, cooling_ratio), final_temperature);
-    return current_temperature > final_temperature;
+    return current_temperature == final_temperature;
 }
 
 bool HybridTabuSAMethod::heating() {
@@ -28,12 +28,11 @@ void HybridTabuSAMethod::updateTemperature(bool &isCooling, int &iterToChange) {
     else isCooling = heating();
 }
 
-Individual& HybridTabuSAMethod::findBestIndividual(vector<Individual> &individuals, Individual &bestInd) {
-
+Individual& HybridTabuSAMethod::findBestIndividual(vector<Individual> &individuals, Individual &currentInd) {
     for (auto &ind: individuals)
-        if (bestInd > ind || annealing(ind.getFitness(), bestInd.getFitness()))
-            bestInd = ind;
-    return bestInd;
+        if (currentInd > ind || annealing(ind.getFitness(), currentInd.getFitness()))
+            currentInd = ind;
+    return currentInd;
 }
 
 void HybridTabuSAMethod::algorithmStep(Individual &currentBestIndividual, vector<Individual> &neighborhood) {
