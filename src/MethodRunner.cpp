@@ -1,4 +1,5 @@
 #include "MethodRunner.h"
+
 void MethodRunner::runMethods() {
     if (!config.contains("config")) {
         cerr << "Error: 'config' section is missing!" << endl;
@@ -14,6 +15,7 @@ void MethodRunner::runMethods() {
 vector<Method *> MethodRunner::getSelectedMethods(const json& config, const string& key) {
     vector<string> methodNames = extractMethodsFromJson(config, key);
     vector<Method *> selectedMethods;
+    selectedMethods.reserve(methodNames.size());
 
     for (const string& methodName : methodNames)
         if (methods.find(methodName) != methods.end()) selectedMethods.push_back(methods[methodName].get());
