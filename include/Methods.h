@@ -172,8 +172,6 @@ private:
 
     void reset() override;
 
-    bool isBest(Individual &ind, Individual *bestInd);
-
     bool annealing(double newIndScore, double oldIndScore);
 
     bool cooling();
