@@ -9,8 +9,10 @@
 using json = nlohmann::json;
 
 int main(int argc, char* argv[]) {
+    ios::sync_with_stdio(false);
+
     if (argc < 2) {
-        std::cout << "Usage: " << argv[0] << " <config_file_path>" << std::endl;
+        cout << "Usage: " << argv[0] << " <config_file_path>" << endl;
         return 0;
     }
 
@@ -20,13 +22,15 @@ int main(int argc, char* argv[]) {
     Loader loader;
     auto data = loader.loadProblemFromFile(dataFilePath);
     if (!data.has_value()) {
-        std::cerr << "Error while loading data from file" << std::endl;
+        cerr << "Error while loading data from file" << endl;
         return 1;
     }
 
     Problem problem(data.value());
 
-    std::mt19937 randomEngine(std::chrono::system_clock::now().time_since_epoch().count());
+    mt19937 randomEngine(chrono::system_clock::now().time_since_epoch().count());
+    vector<mt19937> engines;
+
     SingleSwapMutation singleSwapMutation(randomEngine);
     InversionMutation inversionMutation(randomEngine);
 
@@ -46,5 +50,6 @@ int main(int argc, char* argv[]) {
 
     MethodRunner runner(problem, config, methods);
     runner.runMethods();
+
     return 0;
 }
