@@ -70,22 +70,41 @@ void Method::runEachMethodManyTimesAndSave(const Problem &problem, const vector<
         return;
     }
 
+//    // Write header
+//    string header;
+//    for (auto &method: methods) {
+//        header += method->short_name;
+//        if (&method != &methods.back()) header += ",";
+//    }
+//    file << header << "\n";
+//
+//    // Write results
+//    for (int i = 0; i < numberOfRuns; ++i) {
+//        for (int j = 0; j < methods.size(); ++j) {
+//            file << results[j][i].getFitness();
+//            if (j != methods.size() - 1) file << ",";
+//        }
+//        file << "\n";
+//    }
+
+    // Approximate buffer size assuming 10 characters per method name, 10 characters per number, commas, and newlines
+    ostringstream buffer;
+    int bufferSize = methods.size() * 10 + numberOfRuns * methods.size() * 11;
+    buffer.str().reserve(bufferSize);
+
     // Write header
-    string header;
-    for (auto &method: methods) {
-        header += method->short_name;
-        if (&method != &methods.back()) header += ",";
-    }
-    file << header << "\n";
+    for (int j = 0; j < methods.size() - 1; ++j)
+        buffer << methods[j]->short_name << ",";
+    buffer << methods[methods.size() - 1]->short_name << "\n";
 
     // Write results
     for (int i = 0; i < numberOfRuns; ++i) {
-        for (int j = 0; j < methods.size(); ++j) {
-            file << results[j][i].getFitness();
-            if (j != methods.size() - 1) file << ",";
-        }
-        file << "\n";
+        for (int j = 0; j < methods.size() - 1; ++j)
+            buffer << results[j][i].getFitness() << ",";
+        buffer << results[methods.size() - 1][i].getFitness() << "\n";
     }
+
+    file << buffer.str();
 
     file.close();
 }

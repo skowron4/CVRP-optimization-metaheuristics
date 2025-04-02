@@ -13,18 +13,18 @@ public:
         int best = 0, worst = 0;
         double avg = 0.0, stdDev = 0.0;
 
+        inline static const string HEADER = "best,avg,worst,stdDev";
+
         friend ostream &operator<<(ostream &os, const FitnessRecord &record) {
             os << record.best << ',' << record.avg << ',' << record.worst << ',' << record.stdDev;
             return os;
-        }
-
-        static string getHeader() {
-            return "best,avg,worst,stdDev";
         }
     };
 
 private:
     vector<FitnessRecord> records;
+
+    int determineBufferSize(int doublePrecision) const;
 
 public:
 
