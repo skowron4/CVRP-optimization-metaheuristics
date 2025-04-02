@@ -31,6 +31,8 @@ private:
 
     virtual void reset() = 0;
 
+    static void runEachMethodManyTimes(const vector<Method *> &methods, int numberOfRuns, vector<vector<Individual>> &results);
+
 public:
     explicit Method(Problem &problem, int iterations, mt19937 randomEngine) :
             problem(problem),
