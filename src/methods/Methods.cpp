@@ -33,23 +33,25 @@ vector<Individual> Method::runManyTimes(int numberOfRuns) {
     return individuals;
 }
 
-void Method::runEachMethodManyTimesAndSave(const Problem &problem, const vector<Method *> &methods, int numberOfRuns) {
-    vector<vector<Individual>> results(methods.size());
+void Method::runEachMethodManyTimes(const vector<Method *> &methods, int numberOfRuns, vector<vector<Individual>> &results) {
     mutex mtx;
 
     auto runMethodManyTimes = [&results, &mtx, numberOfRuns](Method *method, int index) {
         vector<Individual> result = method->runManyTimes(numberOfRuns);
         lock_guard<mutex> lock(mtx);
-        results[index] = result;
+        results[index] = std::move(result);
     };
 
     vector<thread> methodThreads;
     methodThreads.reserve(methods.size());
 
-    int methodSize = methods.size();
-
-    for (int i = 0; i < methodSize; ++i) methodThreads.emplace_back(runMethodManyTimes, methods[i], i);
+    for (int i = 0; i < methods.size(); ++i) methodThreads.emplace_back(runMethodManyTimes, methods[i], i);
     for (auto &thread: methodThreads) thread.join();
+}
+
+void Method::runEachMethodManyTimesAndSave(const Problem &problem, const vector<Method *> &methods, int numberOfRuns) {
+    vector<vector<Individual>> results(methods.size());
+    runEachMethodManyTimes(methods, numberOfRuns, results);
 
     // Save results to CSV file
     string filename = problem.getName();
@@ -78,9 +80,9 @@ void Method::runEachMethodManyTimesAndSave(const Problem &problem, const vector<
 
     // Write results
     for (int i = 0; i < numberOfRuns; ++i) {
-        for (int j = 0; j < methodSize; ++j) {
+        for (int j = 0; j < methods.size(); ++j) {
             file << results[j][i].getFitness();
-            if (j != methodSize - 1) file << ",";
+            if (j != methods.size() - 1) file << ",";
         }
         file << "\n";
     }
