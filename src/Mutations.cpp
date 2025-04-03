@@ -5,7 +5,6 @@
 void SingleSwapMutation::mutate(vector<int> &genotype) {
     if (genotype.size() < 2) return;
 
-    uniform_int_distribution<int> int_dist(0, genotype.size() - 1);
     int left = int_dist(random_engine);
     int right;
 
@@ -18,7 +17,6 @@ void SingleSwapMutation::mutate(vector<int> &genotype) {
 void InversionMutation::mutate(vector<int> &genotype) {
     if (genotype.size() < 2) return;
 
-    uniform_int_distribution<int> int_dist(0, genotype.size() - 1);
     int left = int_dist(random_engine);
     int right;
 

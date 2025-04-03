@@ -28,9 +28,7 @@ private:
 
 public:
 
-    explicit Statistics(int iterations) {
-        records.reserve(iterations);
-    };
+    explicit Statistics(int iterations) { records.reserve(iterations); };
 
     void calculateAndAddStatisticsFitnessRecord(const vector<Individual> &individuals);
 

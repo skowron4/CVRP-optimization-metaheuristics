@@ -7,7 +7,7 @@ bool HybridTabuSAMethod::annealing(double newIndScore, double oldIndScore) {
 
 bool HybridTabuSAMethod::cooling() {
     current_temperature = max(cooling_scheme(current_temperature, cooling_ratio), final_temperature);
-    return current_temperature == final_temperature;
+    return current_temperature != final_temperature;
 }
 
 bool HybridTabuSAMethod::heating() {
@@ -27,14 +27,13 @@ void HybridTabuSAMethod::updateTemperature(bool &isCooling, int &iterToChange) {
 Individual& HybridTabuSAMethod::findBestIndividual(vector<Individual> &individuals, Individual &currentInd) {
     for (auto &ind: individuals)
         if (!tabu_list.contains(ind) &&
-            currentInd > ind ||
-            annealing(ind.getFitness(), currentInd.getFitness()))
+                (currentInd > ind || annealing(ind.getFitness(), currentInd.getFitness())))
             currentInd = ind;
     return currentInd;
 }
 
 void HybridTabuSAMethod::algorithmStep(Individual &currentBestIndividual, vector<Individual> &neighborhood) {
-    neighborhood = generateNeighbourhood(currentBestIndividual, mutation, neighbourhood_size);
+    neighborhood = generateNeighbourhood(currentBestIndividual, neighbourhood_size);
     currentBestIndividual = findBestIndividual(neighborhood, currentBestIndividual);
 
     if (currentBestIndividual < best_individual) {
@@ -44,8 +43,6 @@ void HybridTabuSAMethod::algorithmStep(Individual &currentBestIndividual, vector
 }
 
 Individual HybridTabuSAMethod::run() {
-    reset();
-
     Individual currentIndividual = problem.createRandomIndividual(random_engine);
     best_individual = currentIndividual;
     vector<Individual> neighborhood;
@@ -64,8 +61,6 @@ Individual HybridTabuSAMethod::run() {
 }
 
 Individual HybridTabuSAMethod::runAndSave() {
-    reset();
-
     Individual currentIndividual = problem.createRandomIndividual(random_engine);
     best_individual = currentIndividual;
     vector<Individual> neighborhood;
@@ -89,8 +84,8 @@ Individual HybridTabuSAMethod::runAndSave() {
 }
 
 string HybridTabuSAMethod::getFileName() const {
-    return problem.getName() + "_" + short_name + "_" +
-           "mut_" + mutation.getName() + "_" +
+    return problem.getName() + "_" + type + "_" +
+           "mut_" + mutation->getType() + "_" +
            "iter_" + to_string(iterations) + "_" +
            "tabu_" + to_string(tabu_list_size) + "_" +
            "nbh" + to_string(neighbourhood_size) + "_" +
@@ -100,9 +95,4 @@ string HybridTabuSAMethod::getFileName() const {
            "iterHeat_" + to_string(iteration_to_start_heating) + "_" +
            "coolScheme_" + cool_scheme_name + "_" +
            "heatScheme_" + heat_scheme_name;
-}
-
-void HybridTabuSAMethod::reset() {
-    tabu_list.clear();
-    current_temperature = initial_temperature;
 }

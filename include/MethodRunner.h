@@ -4,35 +4,26 @@
 #include "Problem.h"
 #include <json.hpp>
 #include "Methods.h"
+#include "MethodFactory.h"
+#include "JSONParser.h"
 
 using json = nlohmann::json;
 using namespace std;
 
 class MethodRunner {
 public:
-    MethodRunner(Problem& problem,
-                 const json& config,
-                 unordered_map<string, unique_ptr<Method>>& methods) :
-                 problem(problem),
-                 config(config),
-                 methods(methods) {}
+    MethodRunner(Problem &problem, JSONParser &jsonParser) : problem(problem), json_parser(jsonParser) {}
 
-    void runMethods();
+    void runConfig();
 
 private:
     Problem &problem;
-    const json &config;
-    unordered_map<string, unique_ptr<Method>> &methods;
+    JSONParser &json_parser;
+    MethodFactory method_factory;
 
-    void runBoxPlotMethods(const json &boxPlotConfig);
+    void runBoxPlotMethods();
 
-    void runSinglePlotMethods(const json &singlePlotConfig);
-
-    vector<string> extractMethodsFromJson(const json &config, const string &key);
-
-    int extractIterationsFromJson(const json &config, const string &key);
-
-    vector<Method *> getSelectedMethods(const json &config, const string &key);
+    void runSinglePlotMethods();
 };
 
 #endif //CVRP_OPTIMIZATION_METAHEURISTICS_METHODRUNNER_H

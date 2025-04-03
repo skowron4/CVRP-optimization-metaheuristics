@@ -2,7 +2,6 @@
 #include <json.hpp>
 #include <fstream>
 #include "Methods.h"
-#include "unordered_map"
 #include "JSONParser.h"
 #include "MethodRunner.h"
 
@@ -16,11 +15,11 @@ int main(int argc, char* argv[]) {
         return 0;
     }
 
-    string configFilePath = argv[1];
-    string dataFilePath = argv[2];
+    string config_file_path = argv[1];
+    string data_file_path = argv[2];
 
     Loader loader;
-    auto data = loader.loadProblemFromFile(dataFilePath);
+    auto data = loader.loadProblemFromFile(data_file_path);
     if (!data.has_value()) {
         cerr << "Error while loading data from file" << endl;
         return 1;
@@ -28,28 +27,10 @@ int main(int argc, char* argv[]) {
 
     Problem problem(data.value());
 
-    mt19937 randomEngine(chrono::system_clock::now().time_since_epoch().count());
-    vector<mt19937> engines;
+    JSONParser json_parser(config_file_path);
 
-    SingleSwapMutation singleSwapMutation(randomEngine);
-    InversionMutation inversionMutation(randomEngine);
-
-    auto geometric = [](double temp, double ratio) {return temp * ratio;};
-    auto linear = [](double temp, double ratio) {return temp + ratio;};
-
-    json config = JSONParser::loadJSON(configFilePath);
-
-    unordered_map<string, unique_ptr<Method>> methods =
-            JSONParser::parseJSONAndCreateMethods(config.at("methods"),
-                                                  problem,
-                                                  singleSwapMutation,
-                                                  inversionMutation,
-                                                  linear,
-                                                  geometric,
-                                                  randomEngine);
-
-    MethodRunner runner(problem, config, methods);
-    runner.runMethods();
+    MethodRunner runner(problem, json_parser);
+    runner.runConfig();
 
     return 0;
 }

@@ -12,14 +12,32 @@ using namespace std;
 
 class JSONParser {
 public:
-    static json loadJSON(const string& filePath);
-    static unordered_map<string, unique_ptr<Method>> parseJSONAndCreateMethods(const json& config,
-                                                                               Problem& problem,
-                                                                               SingleSwapMutation& singleSwapMutation,
-                                                                               InversionMutation& inversionMutation,
-                                                                               double (*linear)(double, double),
-                                                                               double (*geometric)(double, double),
-                                                                               mt19937& randomEngine);
+    explicit JSONParser(const string &configurationFilePath) { loadJSON(configurationFilePath); }
+
+    vector<json> getSelectedBoxPlotMethodsConfig() const;
+
+    vector<json> getSelectedSinglePlotMethodsConfig() const;
+
+    int getBoxPlotIterations() const;
+
+private:
+    // JSON keys
+    inline static const string METHODS = "methods";
+    inline static const string PLOT_CONFIG = "plotConfig";
+    inline static const string BOX_PLOT = "boxPlot";
+    inline static const string BOX_PLOT_METHODS = "methods";
+    inline static const string BOX_PLOT_ITERATIONS = "iter";
+    inline static const string SINGLE_PLOT = "singlePlot";
+
+    json config;
+
+    void loadJSON(const string &filePath);
+
+    json getConfigValue(const vector<string> &keys) const;
+
+    vector<json> filterExistingMethodsConfig(const vector<string>& methodsName) const;
+
+    string makeKeyPath(const vector<string> &keys) const;
 };
 
 #endif //CVRP_OPTIMIZATION_METAHEURISTICS_JSONPARSER_H

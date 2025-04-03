@@ -11,7 +11,7 @@ Individual& TabuSearchMethod::findBestIndividual(vector<Individual> &individuals
 }
 
 void TabuSearchMethod::algorithmStep(Individual &currentIndividual, vector<Individual> &neighborhood) {
-    neighborhood = generateNeighbourhood(currentIndividual, mutation, neighbourhood_size);
+    neighborhood = generateNeighbourhood(currentIndividual, neighbourhood_size);
     currentIndividual = findBestIndividual(neighborhood, currentIndividual);
 
     if (currentIndividual < best_individual) {
@@ -21,8 +21,6 @@ void TabuSearchMethod::algorithmStep(Individual &currentIndividual, vector<Indiv
 }
 
 Individual TabuSearchMethod::run() {
-    reset();
-
     Individual currentIndividual = problem.createRandomIndividual(random_engine);
     best_individual = currentIndividual;
     vector<Individual> neighborhood;
@@ -35,8 +33,6 @@ Individual TabuSearchMethod::run() {
 }
 
 Individual TabuSearchMethod::runAndSave() {
-    reset();
-
     Individual currentIndividual = problem.createRandomIndividual(random_engine);
     best_individual = currentIndividual;
     vector<Individual> neighborhood;
@@ -56,13 +52,9 @@ Individual TabuSearchMethod::runAndSave() {
 }
 
 string TabuSearchMethod::getFileName() const {
-    return problem.getName() + "_" + short_name + "_" +
-           "mut_" + mutation.getName() + "_" +
+    return problem.getName() + "_" + type + "_" +
+           "mut_" + mutation->getType() + "_" +
            "iter_" + to_string(iterations) + "_" +
            "tabu_" + to_string(tabu_list_size) + "_" +
            "nbh" + to_string(neighbourhood_size);
-}
-
-void TabuSearchMethod::reset() {
-    tabu_list.clear();
 }

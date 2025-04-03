@@ -16,13 +16,9 @@ private:
 public:
     explicit TabuList(int tabuListSize) : tabu_list_size(tabuListSize) {};
 
-    TabuList(const TabuList &tabuList) : tabu_list_size(tabuList.tabu_list_size) {};
-
     void add(const Individual &individual);
 
     bool contains(const Individual &individual) const;
-
-    void clear();
 };
 
 #endif //CVRP_OPTIMIZATION_METAHEURISTICS_TABULIST_H

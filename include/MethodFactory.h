@@ -4,63 +4,40 @@
 #include "iostream"
 #include "Methods.h"
 #include <json.hpp>
+#include <utility>
 
 using json = nlohmann::json;
 using namespace std;
 
 class MethodFactory {
 public:
-    static unique_ptr<Method> createMethodFromJson(
-            const json& methodConfig,
-            Problem& problem,
-            SingleSwapMutation& singleSwapMutation,
-            InversionMutation& inversionMutation,
-            double (*linear)(double, double),
-            double (*geometric)(double, double),
-            mt19937& randomEngine) {
-        string name = parseString(methodConfig, "name");
-
-        Mutation* mutation = selectMutation(methodConfig, singleSwapMutation, inversionMutation);
-
-        if (name == "tabu")
-            return createTabuMethod(methodConfig, problem, mutation, randomEngine);
-        else if (name == "annealing")
-            return createSimulatedAnnealingMethod(methodConfig, problem, mutation, randomEngine, linear, geometric);
-        else if (name == "hybrid")
-            return createHybridTabuSAMethod(methodConfig, problem, mutation, randomEngine, linear, geometric);
-
-        return nullptr;
-    }
+    vector<unique_ptr<Method>> createMethodManyTimes(const json &methodConfig, Problem &problem, int count) const;
 
 private:
-    static string parseString(const json& methodConfig, const string& key);
+    inline static auto geometric = [](double temp, double ratio) { return temp * ratio; };
+    inline static auto linear = [](double temp, double ratio) { return temp + ratio; };
 
-    static int parseInt(const json& methodConfig, const string& key);
+    unique_ptr<Method> createMethod(const json &methodConfig, Problem &problem) const;
 
-    static double parseDouble(const json& methodConfig, const string& key);
+    string parseString(const json &methodConfig, const string &key) const;
 
-    static Mutation* selectMutation(const json& methodConfig,
-                             SingleSwapMutation& singleSwapMutation,
-                             InversionMutation& inversionMutation);
+    int parseInt(const json &methodConfig, const string &key) const;
 
-    static unique_ptr<Method> createTabuMethod(const json& methodConfig,
-                                             Problem& problem,
-                                             Mutation* mutation,
-                                             mt19937& randomEngine);
+    double parseDouble(const json &methodConfig, const string &key) const;
 
-    static unique_ptr<Method> createSimulatedAnnealingMethod(const json& methodConfig,
-                                                           Problem& problem,
-                                                           Mutation* mutation,
-                                                           mt19937& randomEngine,
-                                                           double (*linear)(double, double),
-                                                           double (*geometric)(double, double));
+    unique_ptr<Mutation> createMutation(const string &mutationType, Problem &problem) const;
 
-    static unique_ptr<Method> createHybridTabuSAMethod(const json& methodConfig,
-                                                     Problem& problem,
-                                                     Mutation* mutation,
-                                                     mt19937& randomEngine,
-                                                     double (*linear)(double, double),
-                                                     double (*geometric)(double, double));
+    unique_ptr<Method> createTabuMethod(const json &methodConfig,
+                                        Problem &problem,
+                                        unique_ptr<Mutation> mutation) const;
+
+    unique_ptr<Method> createSimulatedAnnealingMethod(const json &methodConfig,
+                                                      Problem &problem,
+                                                      unique_ptr<Mutation> mutation) const;
+
+    unique_ptr<Method> createHybridTabuSAMethod(const json &methodConfig,
+                                                Problem &problem,
+                                                unique_ptr<Mutation> mutation) const;
 };
 
 #endif //CVRP_OPTIMIZATION_METAHEURISTICS_METHODFACTORY_H
