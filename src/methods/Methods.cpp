@@ -5,57 +5,48 @@
 #include "Methods.h"
 #include "Utils.h"
 
-vector<Individual> Method::generateNeighbourhood(const Individual &individual, Mutation &mutation, int size) {
+vector<Individual> Method::generateNeighbourhood(const Individual &individual, int size) {
     vector<Individual> newNeighbourhood(size, individual);
 
-    for (Individual &ind: newNeighbourhood) ind.mutate(mutation);
+    for (Individual &ind: newNeighbourhood) ind.mutate(*mutation);
 
     return std::move(newNeighbourhood);
 }
 
-vector<Individual> Method::runManyTimes(int numberOfRuns) {
-    vector<Individual> individuals;
-    individuals.reserve(numberOfRuns);
+vector<vector<Individual>> Method::runEachMethodBoxPlot(const vector<vector<unique_ptr<Method>>> &methods) {
+    vector<vector<Individual>> results(methods.size());
+    for (int i = 0; i < methods.size(); ++i) results[i].reserve(methods[i].size());
+
     mutex mtx;
 
-    auto runSingleInstance = [this, &individuals, &mtx] {
-        unique_ptr<Method> methodCopy(this->clone());
-        Individual result = methodCopy->run();
+    auto runMethod = [&results, &mtx](Method *method, int index) {
+        Individual result = method->run();
         lock_guard<mutex> lock(mtx);
-        individuals.push_back(result);
+        results[index].push_back(result);
     };
 
     vector<thread> threads;
-    threads.reserve(numberOfRuns);
-    for (int i = 0; i < numberOfRuns; ++i) threads.emplace_back(runSingleInstance);
+    threads.reserve(methods.size() * methods[0].size());
+
+    for (int i = 0; i < methods.size(); ++i)
+        for (const auto &method: methods[i])
+            threads.emplace_back(runMethod, method.get(), i);
+
     for (auto &thread: threads) thread.join();
 
-    return individuals;
+    return results;
 }
 
-void Method::runEachMethodManyTimes(const vector<Method *> &methods, int numberOfRuns, vector<vector<Individual>> &results) {
-    mutex mtx;
+void Method::runEachMethodAndSaveBoxPlot(const Problem &problem, const vector<vector<unique_ptr<Method>>> &methods) {
+    int numberOfRuns = methods[0].size();
+    if (numberOfRuns == 0) return;
 
-    auto runMethodManyTimes = [&results, &mtx, numberOfRuns](Method *method, int index) {
-        vector<Individual> result = method->runManyTimes(numberOfRuns);
-        lock_guard<mutex> lock(mtx);
-        results[index] = std::move(result);
-    };
-
-    vector<thread> methodThreads;
-    methodThreads.reserve(methods.size());
-
-    for (int i = 0; i < methods.size(); ++i) methodThreads.emplace_back(runMethodManyTimes, methods[i], i);
-    for (auto &thread: methodThreads) thread.join();
-}
-
-void Method::runEachMethodManyTimesAndSave(const Problem &problem, const vector<Method *> &methods, int numberOfRuns) {
-    vector<vector<Individual>> results(methods.size());
-    runEachMethodManyTimes(methods, numberOfRuns, results);
+    vector<vector<Individual>> results = runEachMethodBoxPlot(methods);
 
     // Save results to CSV file
     string filename = problem.getName();
-    for (auto &method: methods) filename += "_" + method->short_name;
+    for (const auto & method : methods) filename += "_" + method[0]->type;
+    filename += "_iter_" + to_string(numberOfRuns);
 
     string folder = "../data/results/box/";
     string filepath = folder + filename + "_" + getCurrentTimestamp() + ".csv";
@@ -70,32 +61,15 @@ void Method::runEachMethodManyTimesAndSave(const Problem &problem, const vector<
         return;
     }
 
-//    // Write header
-//    string header;
-//    for (auto &method: methods) {
-//        header += method->short_name;
-//        if (&method != &methods.back()) header += ",";
-//    }
-//    file << header << "\n";
-//
-//    // Write results
-//    for (int i = 0; i < numberOfRuns; ++i) {
-//        for (int j = 0; j < methods.size(); ++j) {
-//            file << results[j][i].getFitness();
-//            if (j != methods.size() - 1) file << ",";
-//        }
-//        file << "\n";
-//    }
-
-    // Approximate buffer size assuming 10 characters per method name, 10 characters per number, commas, and newlines
+    // Approximate buffer size assuming 10 characters per method type, 10 characters per number, commas, and newlines
     ostringstream buffer;
     int bufferSize = methods.size() * 10 + numberOfRuns * methods.size() * 11;
     buffer.str().reserve(bufferSize);
 
     // Write header
     for (int j = 0; j < methods.size() - 1; ++j)
-        buffer << methods[j]->short_name << ",";
-    buffer << methods[methods.size() - 1]->short_name << "\n";
+        buffer << methods[j][0]->type << ",";
+    buffer << methods[methods.size() - 1][0]->type << "\n";
 
     // Write results
     for (int i = 0; i < numberOfRuns; ++i) {
@@ -109,14 +83,9 @@ void Method::runEachMethodManyTimesAndSave(const Problem &problem, const vector<
     file.close();
 }
 
-void Method::runEachMethodOnceAndSave(const vector<Method *> &methods) {
-    auto runAndSave = [](Method *method) {
-        unique_ptr<Method> methodClone = method->clone();
-        methodClone->runAndSave();
-    };
-
+void Method::runEachMethodAndSaveSinglePlots(const vector<unique_ptr<Method>> &methods) {
     vector<thread> threads;
     threads.reserve(methods.size());
-    for (auto method: methods) threads.emplace_back(runAndSave, method);
+    for (const auto &method: methods) { threads.emplace_back(&Method::runAndSave, method.get()); }
     for (auto &thread: threads) thread.join();
 }

@@ -30,26 +30,6 @@ Statistics::FitnessRecord Statistics::calculateFitnessRecord(const vector<Indivi
     return record;
 }
 
-//void Statistics::saveToFile(const string &filename) const {
-//    string folder = "../data/results/single/";
-//    string filepath = folder + filename + "_" + getCurrentTimestamp() + ".csv";
-//
-//    // Create folder if it does not exist
-//    filesystem::create_directories(folder);
-//
-//    ofstream file(filepath);
-//
-//    if (!file.is_open()) {
-//        cerr << "Could not open file " << filepath << endl;
-//        return;
-//    }
-//
-//    file << FitnessRecord::getHeader() << endl;
-//    for (const auto &record: records) file << record << endl;
-//
-//    file.close();
-//}
-
 void Statistics::saveToFile(const string &filename) const {
     string folder = "../data/results/single/";
     string filepath = folder + filename + "_" + getCurrentTimestamp() + ".csv";

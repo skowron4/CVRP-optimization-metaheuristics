@@ -18,7 +18,7 @@ void SimulatedAnnealingMethod::cooling() {
 }
 
 void SimulatedAnnealingMethod::algorithmStep(Individual &currentBestIndividual, vector<Individual> &neighborhood) {
-    neighborhood = generateNeighbourhood(currentBestIndividual, mutation, neighbourhood_size);
+    neighborhood = generateNeighbourhood(currentBestIndividual, neighbourhood_size);
     currentBestIndividual = findBestIndividual(neighborhood, currentBestIndividual);
 
     if (currentBestIndividual < best_individual) best_individual = currentBestIndividual;
@@ -27,8 +27,6 @@ void SimulatedAnnealingMethod::algorithmStep(Individual &currentBestIndividual, 
 }
 
 Individual SimulatedAnnealingMethod::run() {
-    reset();
-
     Individual currentIndividual = problem.createRandomIndividual(random_engine);
     best_individual = currentIndividual;
     vector<Individual> neighborhood;
@@ -39,8 +37,6 @@ Individual SimulatedAnnealingMethod::run() {
 }
 
 Individual SimulatedAnnealingMethod::runAndSave() {
-    reset();
-
     Individual currentBestIndividual = problem.createRandomIndividual(random_engine);
     best_individual = currentBestIndividual;
     vector<Individual> neighborhood;
@@ -58,16 +54,12 @@ Individual SimulatedAnnealingMethod::runAndSave() {
 }
 
 string SimulatedAnnealingMethod::getFileName() const {
-    return problem.getName() + "_" + short_name + "_" +
-           "mut_" + mutation.getName() + "_" +
+    return problem.getName() + "_" + type + "_" +
+           "mut_" + mutation->getType() + "_" +
            "iter_" + to_string(iterations) + "_" +
            "nbh" + to_string(neighbourhood_size) + "_" +
            "T0_" + doubleToString(initial_temperature) + "_" +
            "Tf_" + doubleToString(final_temperature) + "_" +
            "coolScheme_" + cool_scheme_name + "_" +
            "coolRatio_" + to_string(cooling_ratio);
-}
-
-void SimulatedAnnealingMethod::reset() {
-    current_temperature = initial_temperature;
 }

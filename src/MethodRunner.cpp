@@ -1,58 +1,67 @@
 #include "MethodRunner.h"
 
-void MethodRunner::runMethods() {
-    if (!config.contains("config")) {
-        cerr << "Error: 'config' section is missing!" << endl;
+void MethodRunner::runConfig() {
+    runBoxPlotMethods();
+    runSinglePlotMethods();
+}
+
+void MethodRunner::runBoxPlotMethods() {
+    vector<json> methods_config;
+    int iterations;
+
+    try {
+        methods_config = json_parser.getSelectedBoxPlotMethodsConfig();
+        iterations = json_parser.getBoxPlotIterations();
+    } catch (const runtime_error &e) {
+        cerr << "Error: " << e.what() << endl;
         return;
     }
 
-    json configData = config["config"];
-
-    if (configData.contains("boxPlot")) runBoxPlotMethods(configData["boxPlot"]);
-    if (configData.contains("singlePlot")) runSinglePlotMethods(configData);
-}
-
-vector<Method *> MethodRunner::getSelectedMethods(const json& config, const string& key) {
-    vector<string> methodNames = extractMethodsFromJson(config, key);
-    vector<Method *> selectedMethods;
-    selectedMethods.reserve(methodNames.size());
-
-    for (const string& methodName : methodNames)
-        if (methods.find(methodName) != methods.end()) selectedMethods.push_back(methods[methodName].get());
-        else cerr << "Warning: Method '" << methodName << "' not found!" << endl;
-
-    return selectedMethods;
-}
-
-void MethodRunner::runBoxPlotMethods(const json& boxPlotConfig) {
-    vector<Method *> selectedMethods = getSelectedMethods(boxPlotConfig, "methods");
-    int iterations = extractIterationsFromJson(boxPlotConfig, "iter");
-
-    if (selectedMethods.empty() || iterations == -1) return;
-
-    Method::runEachMethodManyTimesAndSave(problem, selectedMethods, iterations);
-}
-
-void MethodRunner::runSinglePlotMethods(const json& singlePlotConfig) {
-    vector<Method *> selectedMethods = getSelectedMethods(singlePlotConfig, "singlePlot");
-
-    if (selectedMethods.empty()) return;
-
-    Method::runEachMethodOnceAndSave(selectedMethods);
-}
-
-vector<string> MethodRunner::extractMethodsFromJson(const json& plotConfig, const string& key) {
-    if (!plotConfig.contains(key) || !plotConfig[key].is_array()) {
-        cerr << "Error: Key '" << key << "' does not exist or is not an array!" << endl;
-        return {};
+    if (methods_config.empty()) {
+        cerr << "No methods selected for box plot!" << endl;
+        return;
     }
-    return plotConfig[key].get<vector<string>>();
+
+    vector<vector<unique_ptr<Method>>> methods(methods_config.size());
+
+    for (int i = 0; i < methods_config.size(); ++i) {
+        auto created_methods = method_factory.createMethodManyTimes(methods_config[i], problem, iterations);
+        if (!created_methods.empty()) methods[i] = std::move(created_methods);
+        else {
+            cerr << "Abandoning box plot data generation!" << endl;
+            return;
+        }
+    }
+
+    Method::runEachMethodAndSaveBoxPlot(problem, methods);
 }
 
-int MethodRunner::extractIterationsFromJson(const json& plotConfig, const string& key) {
-    if (!plotConfig.contains(key) || !plotConfig[key].is_number()) {
-        cerr << "Error: '" << key << "' does not exist or is not a number!" << endl;
-        return -1;
+void MethodRunner::runSinglePlotMethods() {
+    vector<json> methods_config;
+
+    try {
+        methods_config = json_parser.getSelectedSinglePlotMethodsConfig();
+    } catch (const runtime_error &e) {
+        cerr << "Error: " << e.what() << endl;
+        return;
     }
-    return plotConfig[key].get<int>();
+
+    if (methods_config.empty()) {
+        cerr << "No methods selected for single plot!" << endl;
+        return;
+    }
+
+    vector<unique_ptr<Method>> methods;
+    methods.reserve(methods_config.size());
+
+    for (const auto &method_config: methods_config) {
+        auto method = method_factory.createMethodManyTimes(method_config, problem, 1);
+        if (!method.empty()) methods.push_back(std::move(method[0]));
+        else {
+            cerr << "Abandoning single plot data generation!" << endl;
+            return;
+        }
+    }
+
+    Method::runEachMethodAndSaveSinglePlots(methods);
 }

@@ -1,4 +1,3 @@
-import os
 import matplotlib.pyplot as plt
 from .csv_processor import CSVProcessor
 

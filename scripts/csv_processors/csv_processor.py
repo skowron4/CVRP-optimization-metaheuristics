@@ -19,7 +19,7 @@ class CSVProcessor:
         os.makedirs(self.output_directory, exist_ok=True)
         self._traverse_directory()
 
-    def __traverse_directory(self):
+    def _traverse_directory(self):
         with ProcessPoolExecutor() as executor:
             futures = []
             for filename in os.listdir(self.input_directory):
@@ -35,7 +35,7 @@ class CSVProcessor:
             for future in futures:
                 future.result()
 
-    def __process_file(self, input_filepath, output_filepath):
+    def _process_file(self, input_filepath, output_filepath):
         try:
             df = pd.read_csv(input_filepath)
         except Exception as e:

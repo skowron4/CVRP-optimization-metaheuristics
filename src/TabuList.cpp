@@ -12,8 +12,3 @@ void TabuList::add(const Individual &individual) {
 bool TabuList::contains(const Individual &individual) const {
     return tabu_set.find(individual) != tabu_set.end();
 }
-
-void TabuList::clear() {
-    tabu_list.clear();
-    tabu_set.clear();
-}

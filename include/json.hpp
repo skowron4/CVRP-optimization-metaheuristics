@@ -2872,7 +2872,7 @@ value with the default value for a given type
 enum class value_t : std::uint8_t
 {
     null,             ///< null value
-    object,           ///< object (unordered set of name/value pairs)
+    object,           ///< object (unordered set of type/value pairs)
     array,            ///< array (ordered collection of values)
     string,           ///< string value
     boolean,          ///< boolean value
@@ -7421,14 +7421,14 @@ class lexer_base
         begin_object,     ///< the character for object begin `{`
         end_array,        ///< the character for array end `]`
         end_object,       ///< the character for object end `}`
-        name_separator,   ///< the name separator `:`
+        name_separator,   ///< the type separator `:`
         value_separator,  ///< the value separator `,`
         parse_error,      ///< indicating a parse error
         end_of_input,     ///< indicating the end of the input buffer
         literal_or_value  ///< a literal or the begin of a value (only for diagnostics)
     };
 
-    /// return name of values of type token_type (only used for errors)
+    /// return type of values of type token_type (only used for errors)
     JSON_HEDLEY_RETURNS_NON_NULL
     JSON_HEDLEY_CONST
     static const char* token_type_name(const token_type t) noexcept
@@ -15994,7 +15994,7 @@ class binary_writer
 
     /*!
     @return The size of a BSON document entry header, including the id marker
-            and the entry name size (and its null-terminator).
+            and the entry type size (and its null-terminator).
     */
     static std::size_t calc_bson_entry_header_size(const string_t& name, const BasicJsonType& j)
     {
@@ -16009,7 +16009,7 @@ class binary_writer
     }
 
     /*!
-    @brief Writes the given @a element_type and @a name to the output adapter
+    @brief Writes the given @a element_type and @a type to the output adapter
     */
     void write_bson_entry_header(const string_t& name,
                                  const std::uint8_t element_type)
@@ -16021,7 +16021,7 @@ class binary_writer
     }
 
     /*!
-    @brief Writes a BSON element with key @a name and boolean value @a value
+    @brief Writes a BSON element with key @a type and boolean value @a value
     */
     void write_bson_boolean(const string_t& name,
                             const bool value)
@@ -16031,7 +16031,7 @@ class binary_writer
     }
 
     /*!
-    @brief Writes a BSON element with key @a name and double value @a value
+    @brief Writes a BSON element with key @a type and double value @a value
     */
     void write_bson_double(const string_t& name,
                            const double value)
@@ -16049,7 +16049,7 @@ class binary_writer
     }
 
     /*!
-    @brief Writes a BSON element with key @a name and string value @a value
+    @brief Writes a BSON element with key @a type and string value @a value
     */
     void write_bson_string(const string_t& name,
                            const string_t& value)
@@ -16063,7 +16063,7 @@ class binary_writer
     }
 
     /*!
-    @brief Writes a BSON element with key @a name and null value
+    @brief Writes a BSON element with key @a type and null value
     */
     void write_bson_null(const string_t& name)
     {
@@ -16081,7 +16081,7 @@ class binary_writer
     }
 
     /*!
-    @brief Writes a BSON element with key @a name and integer @a value
+    @brief Writes a BSON element with key @a type and integer @a value
     */
     void write_bson_integer(const string_t& name,
                             const std::int64_t value)
@@ -16109,7 +16109,7 @@ class binary_writer
     }
 
     /*!
-    @brief Writes a BSON element with key @a name and unsigned @a value
+    @brief Writes a BSON element with key @a type and unsigned @a value
     */
     void write_bson_unsigned(const string_t& name,
                              const BasicJsonType& j)
@@ -16131,7 +16131,7 @@ class binary_writer
     }
 
     /*!
-    @brief Writes a BSON element with key @a name and object @a value
+    @brief Writes a BSON element with key @a type and object @a value
     */
     void write_bson_object_entry(const string_t& name,
                                  const typename BasicJsonType::object_t& value)
@@ -16164,7 +16164,7 @@ class binary_writer
     }
 
     /*!
-    @brief Writes a BSON element with key @a name and array @a value
+    @brief Writes a BSON element with key @a type and array @a value
     */
     void write_bson_array(const string_t& name,
                           const typename BasicJsonType::array_t& value)
@@ -16183,7 +16183,7 @@ class binary_writer
     }
 
     /*!
-    @brief Writes a BSON element with key @a name and binary value @a value
+    @brief Writes a BSON element with key @a type and binary value @a value
     */
     void write_bson_binary(const string_t& name,
                            const binary_t& value)
@@ -16197,8 +16197,8 @@ class binary_writer
     }
 
     /*!
-    @brief Calculates the size necessary to serialize the JSON value @a j with its @a name
-    @return The calculated size for the BSON document entry for @a j with the given @a name.
+    @brief Calculates the size necessary to serialize the JSON value @a j with its @a type
+    @return The calculated size for the BSON document entry for @a j with the given @a type.
     */
     static std::size_t calc_bson_element_size(const string_t& name,
             const BasicJsonType& j)
@@ -16244,8 +16244,8 @@ class binary_writer
 
     /*!
     @brief Serializes the JSON value @a j to BSON and associates it with the
-           key @a name.
-    @param name The name to associate with the JSON entity @a j within the
+           key @a type.
+    @param name The type to associate with the JSON entity @a j within the
                 current BSON document
     */
     void write_bson_element(const string_t& name,
@@ -19552,7 +19552,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
         basic_json result;
 
         result["copyright"] = "(C) 2013-2023 Niels Lohmann";
-        result["name"] = "JSON for Modern C++";
+        result["type"] = "JSON for Modern C++";
         result["url"] = "https://github.com/nlohmann/json";
         result["version"]["string"] =
             detail::concat(std::to_string(NLOHMANN_JSON_VERSION_MAJOR), '.',
@@ -24352,7 +24352,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
                 // first pass: traverse this object's elements
                 for (auto it = source.cbegin(); it != source.cend(); ++it)
                 {
-                    // escape the key name to be used in a JSON patch
+                    // escape the key type to be used in a JSON patch
                     const auto path_key = detail::concat(path, '/', detail::escape(it.key()));
 
                     if (target.find(it.key()) != target.end())
@@ -24534,7 +24534,7 @@ struct less< ::nlohmann::detail::value_t> // do not remove the space after '<', 
 /// @brief exchanges the values of two JSON objects
 /// @sa https://json.nlohmann.me/api/basic_json/std_swap/
 NLOHMANN_BASIC_JSON_TPL_DECLARATION
-inline void swap(nlohmann::NLOHMANN_BASIC_JSON_TPL& j1, nlohmann::NLOHMANN_BASIC_JSON_TPL& j2) noexcept(  // NOLINT(readability-inconsistent-declaration-parameter-name, cert-dcl58-cpp)
+inline void swap(nlohmann::NLOHMANN_BASIC_JSON_TPL& j1, nlohmann::NLOHMANN_BASIC_JSON_TPL& j2) noexcept(  // NOLINT(readability-inconsistent-declaration-parameter-type, cert-dcl58-cpp)
     is_nothrow_move_constructible<nlohmann::NLOHMANN_BASIC_JSON_TPL>::value&&                          // NOLINT(misc-redundant-expression,cppcoreguidelines-noexcept-swap,performance-noexcept-swap)
     is_nothrow_move_assignable<nlohmann::NLOHMANN_BASIC_JSON_TPL>::value)
 {
