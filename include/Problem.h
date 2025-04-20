@@ -10,7 +10,6 @@ using namespace std;
 class Individual;
 
 class Problem {
-private:
     Loader::Data data;
 
     vector<vector<int>> distance_matrix;

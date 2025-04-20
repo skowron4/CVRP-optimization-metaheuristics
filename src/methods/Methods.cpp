@@ -6,7 +6,7 @@
 #include "Utils.h"
 
 vector<Individual> Method::generateNeighbourhood(const Individual &individual, int size) {
-    vector<Individual> newNeighbourhood(size, individual);
+    vector newNeighbourhood(size, individual);
 
     for (Individual &ind: newNeighbourhood) ind.mutate(*mutation);
 
@@ -21,7 +21,7 @@ vector<vector<Individual>> Method::runEachMethodBoxPlot(const vector<vector<uniq
 
     auto runMethod = [&results, &mtx](Method *method, int index) {
         Individual result = method->run();
-        lock_guard<mutex> lock(mtx);
+        lock_guard lock(mtx);
         results[index].push_back(result);
     };
 

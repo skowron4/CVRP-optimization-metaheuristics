@@ -9,7 +9,7 @@ using namespace std;
 using namespace std::filesystem;
 using json = nlohmann::json;
 
-//TODO :
+//TODO : Alternatively improve validation of the config file and data file
 
 int main(int argc, char *argv[]) {
     ios::sync_with_stdio(false);

@@ -8,10 +8,10 @@ void Problem::computeDistanceMatrix() {
     distance_matrix.resize(data.dimension, vector<int>(data.dimension, 0));
     for (int i = 0; i < data.dimension; i++) {
         for (int j = i + 1; j < data.dimension; j++) {
-            int x1{static_cast<int>(data.cities[i].x)},
-            y1{static_cast<int>(data.cities[i].y)},
-            x2{static_cast<int>(data.cities[j].x)},
-            y2{static_cast<int>(data.cities[j].y)};
+            int x1{(data.cities[i].x)},
+            y1{(data.cities[i].y)},
+            x2{(data.cities[j].x)},
+            y2{(data.cities[j].y)};
 
             int distance = static_cast<int>(round(sqrt(pow(x1 - x2, 2) + pow(y1 - y2, 2))));
             distance_matrix[i][j] = distance;
@@ -28,7 +28,7 @@ Individual Problem::createGreedyIndividual(int startingCity) {
         cities.push_back(j);
     }
 
-    vector<int> genotype(genotype_size, 0);
+    vector genotype(genotype_size, 0);
     genotype[0] = startingCity;
 
     int i{1}, curr{startingCity}, currLoad{data.capacity - data.demands[startingCity - 1].value};
@@ -85,7 +85,7 @@ int Problem::evaluateGenotype(const vector<int> &genotype) const {
 }
 
 Individual Problem::createRandomIndividual(mt19937 &random_engine) {
-    vector<int> genotype(genotype_size, 0);
+    vector genotype(genotype_size, 0);
 
     for (int i = 1; i < data.depot; ++i) genotype[i] = i;
     for (int i = data.depot + 1; i <= data.dimension; ++i) genotype[i] = i;

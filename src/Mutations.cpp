@@ -1,5 +1,4 @@
 #include <algorithm>
-#include <iostream>
 #include "Mutations.h"
 
 void SingleSwapMutation::mutate(vector<int> &genotype) {

@@ -1,10 +1,8 @@
 #ifndef CVRP_OPTIMIZATION_METAHEURISTICS_METHODFACTORY_H
 #define CVRP_OPTIMIZATION_METAHEURISTICS_METHODFACTORY_H
 
-#include "iostream"
 #include "Methods.h"
 #include <json.hpp>
-#include <utility>
 
 using json = nlohmann::json;
 using namespace std;

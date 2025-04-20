@@ -42,8 +42,8 @@ bool Individual::compareGenotype(const vector<int>& vec1, const vector<int>& vec
     auto first_non_zero_vec2 = find_if(vec2.begin(), vec2.end(), [](int i) { return i != 0; });
     auto last_non_zero_vec2 = find_if(vec2.rbegin(), vec2.rend(), [](int i) { return i != 0; }).base();
 
-    vector<int> simplified_vec1(first_non_zero_vec1, last_non_zero_vec1);
-    vector<int> simplified_vec2(first_non_zero_vec2, last_non_zero_vec2);
+    vector simplified_vec1(first_non_zero_vec1, last_non_zero_vec1);
+    vector simplified_vec2(first_non_zero_vec2, last_non_zero_vec2);
 
     auto last_vec1 = unique(simplified_vec1.begin(), simplified_vec1.end());
     auto last_vec2 = unique(simplified_vec2.begin(), simplified_vec2.end());
