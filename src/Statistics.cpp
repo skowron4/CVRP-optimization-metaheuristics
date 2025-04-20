@@ -30,12 +30,8 @@ Statistics::FitnessRecord Statistics::calculateFitnessRecord(const vector<Indivi
     return record;
 }
 
-void Statistics::saveToFile(const string &filename) const {
-    string folder = "../data/results/single/";
-    string filepath = folder + filename + "_" + getCurrentTimestamp() + ".csv";
-
-    // Create folder if it does not exist
-    filesystem::create_directories(folder);
+void Statistics::saveToFile(const string &filename, const path &outDir) const {
+    path filepath = outDir / (filename + "_" + getCurrentTimestamp() + ".csv");
 
     ofstream file(filepath);
 

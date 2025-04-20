@@ -32,7 +32,7 @@ Individual TabuSearchMethod::run() {
     return best_individual;
 }
 
-Individual TabuSearchMethod::runAndSave() {
+Individual TabuSearchMethod::runAndSave(const path &outDir) {
     Individual currentIndividual = problem.createRandomIndividual(random_engine);
     best_individual = currentIndividual;
     vector<Individual> neighborhood;
@@ -46,7 +46,7 @@ Individual TabuSearchMethod::runAndSave() {
         statistics.calculateAndAddStatisticsFitnessRecord(neighborhood);
     }
 
-    statistics.saveToFile(getFileName());
+    statistics.saveToFile(getFileName(), outDir);
 
     return best_individual;
 }

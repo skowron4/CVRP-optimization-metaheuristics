@@ -3,7 +3,7 @@
 #include "Methods.h"
 #include "MethodFactory.h"
 
-void JSONParser::loadJSON(const string &filePath) {
+void JSONParser::loadJSON(const path &filePath) {
     ifstream file(filePath);
     if (!file) {
         cerr << "Error: Cannot open file " << filePath << endl;

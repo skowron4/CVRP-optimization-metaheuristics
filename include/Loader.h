@@ -2,10 +2,12 @@
 #define LOADER_H
 
 #include <vector>
+#include <filesystem>
 #include <optional>
 #include <string>
 
 using namespace std;
+using namespace std::filesystem;
 
 class Loader {
 public:
@@ -26,7 +28,7 @@ public:
         void print() const;
     };
 
-    optional<Data> loadProblemFromFile(const string &filepath);
+    optional<Data> loadProblemFromFile(const path &filePath);
 
 private:
     void parseKey(istringstream &iss, int &value);
