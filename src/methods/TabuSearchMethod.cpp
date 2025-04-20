@@ -1,5 +1,5 @@
-#include <algorithm>
 #include "Methods.h"
+#include "Statistics.h"
 
 Individual& TabuSearchMethod::findBestIndividual(vector<Individual> &individuals, Individual &currentInd) {
     Individual *best = nullptr;

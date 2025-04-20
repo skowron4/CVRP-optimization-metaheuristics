@@ -8,7 +8,6 @@
 using namespace std;
 
 class TabuList {
-private:
     int tabu_list_size;
     deque<Individual> tabu_list;
     unordered_set<Individual, Individual::Hash, Individual::Equal> tabu_set;

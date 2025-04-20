@@ -1,5 +1,6 @@
 #include "Methods.h"
 #include "Utils.h"
+#include "Statistics.h"
 
 bool HybridTabuSAMethod::annealing(double newIndScore, double oldIndScore) {
     return exp((oldIndScore - newIndScore) / current_temperature) > real_dist(random_engine);

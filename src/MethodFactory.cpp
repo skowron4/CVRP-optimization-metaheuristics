@@ -8,9 +8,9 @@ unique_ptr<Method> MethodFactory::createMethod(const json &methodConfig, Problem
 
     if (type == "tabu")
         return createTabuMethod(methodConfig, problem, std::move(mutation));
-    else if (type == "annealing")
+    if (type == "annealing")
         return createSimulatedAnnealingMethod(methodConfig, problem, std::move(mutation));
-    else if (type == "hybrid")
+    if (type == "hybrid")
         return createHybridTabuSAMethod(methodConfig, problem, std::move(mutation));
 
     return nullptr;
@@ -48,7 +48,7 @@ double MethodFactory::parseDouble(const json &methodConfig, const string &key) c
 
 unique_ptr<Mutation> MethodFactory::createMutation(const string &mutationType, Problem &problem) const {
     if (mutationType == "swap") return make_unique<SingleSwapMutation>(problem.getGenotypeSize());
-    else return make_unique<InversionMutation>(problem.getGenotypeSize());
+    return make_unique<InversionMutation>(problem.getGenotypeSize());
 }
 
 unique_ptr<Method> MethodFactory::createTabuMethod(const json &methodConfig,

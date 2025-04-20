@@ -3,9 +3,7 @@
 
 #include "Individual.h"
 #include "Problem.h"
-#include "Statistics.h"
 #include "TabuList.h"
-#include "unordered_map"
 #include <memory>
 #include <utility>
 
@@ -53,7 +51,6 @@ public:
 };
 
 class TabuSearchMethod : public Method {
-private:
     int tabu_list_size;
     int neighbourhood_size;
 
@@ -82,7 +79,6 @@ public:
 };
 
 class SimulatedAnnealingMethod : public Method {
-private:
     int neighbourhood_size;
     double initial_temperature;
     double final_temperature;
@@ -130,7 +126,6 @@ public:
 };
 
 class HybridTabuSAMethod : public Method {
-private:
     int iteration_to_start_heating;
     int tabu_list_size;
     int neighbourhood_size;

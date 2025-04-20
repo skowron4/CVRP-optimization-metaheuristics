@@ -4,7 +4,6 @@
 #include "Mutations.h"
 #include "Problem.h"
 #include <vector>
-#include <iomanip>
 #include <iostream>
 
 using namespace std;
@@ -12,7 +11,6 @@ using namespace std;
 class Problem;
 
 class Individual {
-private:
     Problem &problem;
     vector<int> genotype;
     mutable int fitness;

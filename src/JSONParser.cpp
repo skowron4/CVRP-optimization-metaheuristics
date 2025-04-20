@@ -1,6 +1,5 @@
 #include "JSONParser.h"
 #include <fstream>
-#include "Methods.h"
 #include "MethodFactory.h"
 
 void JSONParser::loadJSON(const path &filePath) {
@@ -45,7 +44,7 @@ vector<json> JSONParser::filterExistingMethodsConfig(const vector<string>& metho
 }
 
 vector<json> JSONParser::getSelectedBoxPlotMethodsConfig() const {
-    vector<string> keys = {PLOT_CONFIG, BOX_PLOT, BOX_PLOT_METHODS};
+    vector keys = {PLOT_CONFIG, BOX_PLOT, BOX_PLOT_METHODS};
     json box_plot_methods = getConfigValue(keys);
 
     if (!box_plot_methods.is_array())
@@ -59,7 +58,7 @@ vector<json> JSONParser::getSelectedBoxPlotMethodsConfig() const {
 }
 
 vector<json> JSONParser::getSelectedSinglePlotMethodsConfig() const {
-    vector<string> keys = {PLOT_CONFIG, SINGLE_PLOT};
+    vector keys = {PLOT_CONFIG, SINGLE_PLOT};
     json single_plot_methods = getConfigValue(keys);
 
     if (!single_plot_methods.is_array())
@@ -73,7 +72,7 @@ vector<json> JSONParser::getSelectedSinglePlotMethodsConfig() const {
 }
 
 int JSONParser::getBoxPlotIterations() const {
-    vector<string> keys = {PLOT_CONFIG, BOX_PLOT, BOX_PLOT_ITERATIONS};
+    vector keys = {PLOT_CONFIG, BOX_PLOT, BOX_PLOT_ITERATIONS};
     json iterations = getConfigValue(keys);
 
     if (!iterations.is_number())
