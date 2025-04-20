@@ -34,7 +34,7 @@ public:
 
     static FitnessRecord calculateFitnessRecord(const vector<Individual> &individuals);
 
-    void saveToFile(const string &filename) const;
+    void saveToFile(const string &filename, const path &outDir) const;
 };
 
 #endif //STATISTICS_H

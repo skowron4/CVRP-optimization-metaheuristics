@@ -60,7 +60,7 @@ Individual HybridTabuSAMethod::run() {
     return best_individual;
 }
 
-Individual HybridTabuSAMethod::runAndSave() {
+Individual HybridTabuSAMethod::runAndSave(const path &outDir) {
     Individual currentIndividual = problem.createRandomIndividual(random_engine);
     best_individual = currentIndividual;
     vector<Individual> neighborhood;
@@ -78,7 +78,7 @@ Individual HybridTabuSAMethod::runAndSave() {
         statistics.calculateAndAddStatisticsFitnessRecord(neighborhood);
     }
 
-    statistics.saveToFile(getFileName());
+    statistics.saveToFile(getFileName(), outDir);
 
     return best_individual;
 }

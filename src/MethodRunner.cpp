@@ -1,11 +1,36 @@
 #include "MethodRunner.h"
 
-void MethodRunner::runConfig() {
-    runBoxPlotMethods();
-    runSinglePlotMethods();
+#include <iostream>
+#include <stdexcept>
+
+void MethodRunner::runConfig(const path &destDir) const {
+    error_code ec;
+    if (!exists(destDir) || !is_directory(destDir)) {
+        cerr << "Error: Destination must be an existing directory! " << destDir << "\n";
+        exit(1);
+    }
+
+    path base = destDir / "results";
+    path box = base / "box";
+    path single = base / "single";
+
+    create_directories(box, ec);
+    if (ec) {
+        cerr << "Failed to create directory: " << box << ": " << ec.message() << "\n";
+        exit(1);
+    }
+
+    create_directories(single);
+    if (ec) {
+        cerr << "Failed to create directory: " << single << ": " << ec.message() << "\n";
+        exit(1);
+    }
+
+    runBoxPlotMethods(box);
+    runSinglePlotMethods(single);
 }
 
-void MethodRunner::runBoxPlotMethods() {
+void MethodRunner::runBoxPlotMethods(const path &outDir) const {
     vector<json> methods_config;
     int iterations;
 
@@ -33,10 +58,10 @@ void MethodRunner::runBoxPlotMethods() {
         }
     }
 
-    Method::runEachMethodAndSaveBoxPlot(problem, methods);
+    Method::runEachMethodAndSaveBoxPlot(problem, methods, outDir);
 }
 
-void MethodRunner::runSinglePlotMethods() {
+void MethodRunner::runSinglePlotMethods(const path &outDir) const {
     vector<json> methods_config;
 
     try {
@@ -63,5 +88,5 @@ void MethodRunner::runSinglePlotMethods() {
         }
     }
 
-    Method::runEachMethodAndSaveSinglePlots(methods);
+    Method::runEachMethodAndSaveSinglePlots(methods, outDir);
 }

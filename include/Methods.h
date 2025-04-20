@@ -43,13 +43,13 @@ public:
 
     virtual Individual run() = 0;
 
-    virtual Individual runAndSave() = 0;
+    virtual Individual runAndSave(const path &outDir) = 0;
 
     virtual string getFileName() const = 0;
 
-    static void runEachMethodAndSaveBoxPlot(const Problem &problem, const vector<vector<unique_ptr<Method>>> &methods);
+    static void runEachMethodAndSaveBoxPlot(const Problem &problem, const vector<vector<unique_ptr<Method>>> &methods, const path &outDir);
 
-    static void runEachMethodAndSaveSinglePlots(const vector<unique_ptr<Method>> &methods);
+    static void runEachMethodAndSaveSinglePlots(const vector<unique_ptr<Method>> &methods, const path &outDir);
 };
 
 class TabuSearchMethod : public Method {
@@ -76,7 +76,7 @@ public:
 
     Individual run() override;
 
-    Individual runAndSave() override;
+    Individual runAndSave(const path &outDir) override;
 
     string getFileName() const override;
 };
@@ -124,7 +124,7 @@ public:
 
     Individual run() override;
 
-    Individual runAndSave() override;
+    Individual runAndSave(const path &outDir) override;
 
     string getFileName() const override;
 };
@@ -197,7 +197,7 @@ public:
 
     Individual run() override;
 
-    Individual runAndSave() override;
+    Individual runAndSave(const path &outDir) override;
 
     string getFileName() const override;
 };

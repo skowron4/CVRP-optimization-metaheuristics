@@ -36,7 +36,7 @@ Individual SimulatedAnnealingMethod::run() {
     return best_individual;
 }
 
-Individual SimulatedAnnealingMethod::runAndSave() {
+Individual SimulatedAnnealingMethod::runAndSave(const path &outDir) {
     Individual currentBestIndividual = problem.createRandomIndividual(random_engine);
     best_individual = currentBestIndividual;
     vector<Individual> neighborhood;
@@ -48,7 +48,7 @@ Individual SimulatedAnnealingMethod::runAndSave() {
         statistics.calculateAndAddStatisticsFitnessRecord(neighborhood);
     }
 
-    statistics.saveToFile(getFileName());
+    statistics.saveToFile(getFileName(), outDir);
 
     return best_individual;
 }

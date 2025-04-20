@@ -3,7 +3,7 @@
 #include "Loader.h"
 #include "iostream"
 
-optional<Loader::Data> Loader::loadProblemFromFile(const string &filepath) {
+optional<Loader::Data> Loader::loadProblemFromFile(const path &filepath) {
     ifstream file(filepath);
 
     if (!file.is_open()) {

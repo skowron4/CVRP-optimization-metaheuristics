@@ -3,16 +3,18 @@
 
 #include <json.hpp>
 #include "iostream"
+#include <filesystem>
 #include "Problem.h"
 #include "Mutations.h"
 #include "Methods.h"
 
 using json = nlohmann::json;
 using namespace std;
+using namespace std::filesystem;
 
 class JSONParser {
 public:
-    explicit JSONParser(const string &configurationFilePath) { loadJSON(configurationFilePath); }
+    explicit JSONParser(const path &configurationFilePath) { loadJSON(configurationFilePath); }
 
     vector<json> getSelectedBoxPlotMethodsConfig() const;
 
@@ -31,7 +33,7 @@ private:
 
     json config;
 
-    void loadJSON(const string &filePath);
+    void loadJSON(const path &filePath);
 
     json getConfigValue(const vector<string> &keys) const;
 

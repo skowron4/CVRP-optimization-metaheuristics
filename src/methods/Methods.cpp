@@ -37,7 +37,7 @@ vector<vector<Individual>> Method::runEachMethodBoxPlot(const vector<vector<uniq
     return results;
 }
 
-void Method::runEachMethodAndSaveBoxPlot(const Problem &problem, const vector<vector<unique_ptr<Method>>> &methods) {
+void Method::runEachMethodAndSaveBoxPlot(const Problem &problem, const vector<vector<unique_ptr<Method>>> &methods, const path &outDir) {
     int numberOfRuns = methods[0].size();
     if (numberOfRuns == 0) return;
 
@@ -48,11 +48,7 @@ void Method::runEachMethodAndSaveBoxPlot(const Problem &problem, const vector<ve
     for (const auto & method : methods) filename += "_" + method[0]->type;
     filename += "_iter_" + to_string(numberOfRuns);
 
-    string folder = "../data/results/box/";
-    string filepath = folder + filename + "_" + getCurrentTimestamp() + ".csv";
-
-    // Create folder if it does not exist
-    filesystem::create_directories(folder);
+    path filepath = outDir / (filename + "_" + getCurrentTimestamp() + ".csv");
 
     ofstream file(filepath);
 
@@ -83,9 +79,14 @@ void Method::runEachMethodAndSaveBoxPlot(const Problem &problem, const vector<ve
     file.close();
 }
 
-void Method::runEachMethodAndSaveSinglePlots(const vector<unique_ptr<Method>> &methods) {
+void Method::runEachMethodAndSaveSinglePlots(const vector<unique_ptr<Method>> &methods, const path &outDir) {
     vector<thread> threads;
     threads.reserve(methods.size());
-    for (const auto &method: methods) { threads.emplace_back(&Method::runAndSave, method.get()); }
+    for (const auto &method: methods) {
+        threads.emplace_back(
+            &Method::runAndSave,
+            method.get(),
+            outDir);
+    }
     for (auto &thread: threads) thread.join();
 }
