@@ -9,7 +9,7 @@ string getCurrentTimestamp() {
     tm *now_tm = localtime(&now_time);
 
     ostringstream oss;
-    oss << put_time(now_tm, "%d-%m_%H-%M-%S");
+    oss << put_time(now_tm, "%Y-%d-%m_%H-%M-%S");
     return oss.str();
 }
 
