@@ -14,7 +14,7 @@ class SingleChartProcessor(CSVProcessor):
         best_overall = best.min()
         cumulative_best = best.cummin()
 
-        file_name = self._file_name_without_extension(output_filepath)
+        self._file_name_without_extension(output_filepath)
         
         plt.figure(figsize=(10, 6))
         plt.plot(iterations, best, label='Best neighbour', color='blue')
