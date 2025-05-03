@@ -2,6 +2,11 @@ import os
 import re
 import pandas as pd
 import matplotlib.pyplot as plt
+import logging
+
+logging.basicConfig(level=logging.INFO, format='%(levelname)s - %(message)s')
+
+# TODO: Prototype script – may raise unhandled errors and relies on hard-coded assumptions. May require thorough refactoring.
 
 
 class TendencyOfAlgorithmsProcessor:
@@ -34,12 +39,13 @@ class TendencyOfAlgorithmsProcessor:
                         'HTSA': avg_htsa
                     })
                 except Exception as e:
-                    print(f"Error processing file {filename}: {e}")
+                    logging.error(f"Error processing file {filename}: {e}")
 
-    def plot(self):
+    def process_csv_files(self):
         """Generates and saves a trend plot of average method values per instance (with flipped axes)."""
+        self.load_data()
         if not self.data:
-            print("No data loaded. Make sure to run `load_data()` first.")
+            logging.info("No data to plot tendency chart. Please check the CSV files.")
             return
 
         df = pd.DataFrame(self.data)
@@ -62,4 +68,4 @@ class TendencyOfAlgorithmsProcessor:
         output_file = os.path.join(self.output_path, 'tendency_chart.png')
         plt.savefig(output_file)
         plt.close()
-        print(f"[INFO] Tendency chart saved to {output_file}")
+        logging.info(f"Tendency chart saved to {output_file}")
