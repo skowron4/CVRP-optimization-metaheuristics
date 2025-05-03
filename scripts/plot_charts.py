@@ -24,11 +24,9 @@ def process_box_chart(location):
 
 
 def process_tendency_of_algorithms_chart(location):
-    tendency_src = os.path.join(location, 'results', 'box')
-    tendency_tgt = os.path.join(location, 'results', 'charts', 'box')
-    plotter = TendencyOfAlgorithmsProcessor(tendency_src, tendency_tgt)
-    plotter.load_data()
-    plotter.plot()
+    src = os.path.join(location, 'results', 'box')
+    tgt = os.path.join(location, 'results', 'charts', 'box')
+    TendencyOfAlgorithmsProcessor(src, tgt).process_csv_files()
 
 
 def start_cpp_program(exe_path, config_file, data_file, dest_dir):
@@ -41,22 +39,32 @@ def start_cpp_program(exe_path, config_file, data_file, dest_dir):
         print("C++ stdout:\n", result.stdout)
         print("C++ stderr:\n", result.stderr)
     except subprocess.CalledProcessError as e:
-        print(f"[ERROR] C++ exited {e.returncode}")
-        print("Stdout:", e.stdout)
-        print("Stderr:", e.stderr)
+        print(f"[ERROR] C++ exited with code {e.returncode}")
+        print("Stdout:\n", e.stdout)
+        print("Stderr:\n", e.stderr)
         raise
 
 
 def main():
-    parser = argparse.ArgumentParser(description='(Re)run C++ and/or generate charts from CSV results.')
+    parser = argparse.ArgumentParser(
+        description=(
+            "(Re)run the C++ binary and/or generate charts from CSV results."
+            "If --exe is provided, --config and --data are required to run the C++ program before chart generation."
+            "Otherwise, only charts will be generated from existing results in the specified folder."
+        )
+    )
     parser.add_argument('--exe',
                         type=str,
                         required=False,
                         help='Path to C++ binary in case of additionally running it in advance. Defaults to None.')
-    parser.add_argument('--charts',
+    parser.add_argument('--config',
                         type=str,
-                        default='single,box',
-                        help='Comma-separated charts to generate (single,box). Defaults to all.')
+                        required=False,
+                        help='Path to the config file for the C++ program')
+    parser.add_argument('--data',
+                        type=str,
+                        required=False,
+                        help='Path to the data file for the C++ program')
     parser.add_argument('--location', "--loc",
                         type=str,
                         default='./',
@@ -64,13 +72,14 @@ def main():
                               'results/single' or 'results/box', created previously by the C++ program. \
                               Charts will be saved in 'charts/single' or 'charts/box' subfolders. \
                               Defaults to the current working directory ('./').")
-    parser.add_argument('config',
+    parser.add_argument('--charts',
                         type=str,
-                        help='Path to the config file for the C++ program')
-    parser.add_argument('data',
-                        type=str,
-                        help='Path to the data file for the C++ program')
+                        default='single,box,tendency',
+                        help='Comma-separated charts to generate (single,box,tendency). Defaults to all.')
     args = parser.parse_args()
+
+    if args.exe and not (args.config and args.data):
+        parser.error("If --exe is provided, --config and --data must also be specified.")
 
     location = os.path.abspath(args.location)
 
@@ -85,8 +94,8 @@ def main():
             executor.submit(process_single_chart, location)
         if 'box' in charts:
             executor.submit(process_box_chart, location)
-
-    process_tendency_of_algorithms_chart(location)
+        if 'tendency' in charts:
+            executor.submit(process_tendency_of_algorithms_chart, location)
 
 
 if __name__ == '__main__':
