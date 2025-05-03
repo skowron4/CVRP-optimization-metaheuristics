@@ -4,6 +4,7 @@ import subprocess
 from concurrent.futures import ProcessPoolExecutor
 from csv_processors.box_chart_processor import BoxChartProcessor
 from csv_processors.single_chart_processor import SingleChartProcessor
+from csv_processors.tendency_of_algorithms_processor import TendencyOfAlgorithmsProcessor
 
 # Use non-interactive backend for matplotlib
 import matplotlib
@@ -20,6 +21,14 @@ def process_box_chart(location):
     src = os.path.join(location, 'results', 'box')
     tgt = os.path.join(location, 'results', 'charts', 'box')
     BoxChartProcessor(src, tgt).process_csv_files()
+
+
+def process_tendency_of_algorithms_chart(location):
+    tendency_src = os.path.join(location, 'results', 'box')
+    tendency_tgt = os.path.join(location, 'results', 'charts', 'box')
+    plotter = TendencyOfAlgorithmsProcessor(tendency_src, tendency_tgt)
+    plotter.load_data()
+    plotter.plot()
 
 
 def start_cpp_program(exe_path, config_file, data_file, dest_dir):
@@ -76,6 +85,9 @@ def main():
             executor.submit(process_single_chart, location)
         if 'box' in charts:
             executor.submit(process_box_chart, location)
+
+    process_tendency_of_algorithms_chart(location)
+
 
 if __name__ == '__main__':
     main()
