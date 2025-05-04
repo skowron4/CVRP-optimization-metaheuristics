@@ -74,7 +74,7 @@ def main():
                               Defaults to the current working directory ('./').")
     parser.add_argument('--charts',
                         type=str,
-                        default='single,box,tendency',
+                        default='single,box',
                         help='Comma-separated charts to generate (single,box,tendency). Defaults to all.')
     args = parser.parse_args()
 
